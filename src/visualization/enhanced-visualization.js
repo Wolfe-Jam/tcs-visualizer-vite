@@ -125,14 +125,20 @@ export class EnhancedTCMVisualization {
     createVisualization() {
         // Create cylinder geometry for the outer shell
         const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 3, 32, 1, true);
-        const cylinderMaterial = new THREE.MeshStandardMaterial({
+        
+        // Create core TCS shader material with vertical gradient (black-color-white)
+        const tcsMaterial = this.createTCSMaterial();
+        
+        // Create a backup standard material for compatibility
+        const standardMaterial = new THREE.MeshStandardMaterial({
             color: this.currentColor,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0.8
         });
-        this.cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-        this.originalCylinderMaterial = cylinderMaterial.clone(); // Store original material
+        
+        this.cylinder = new THREE.Mesh(cylinderGeometry, tcsMaterial);
+        this.originalCylinderMaterial = standardMaterial.clone(); // Store original material for fallback
         this.scene.add(this.cylinder);
         
         // Create inner cylinder for depth perception
@@ -184,12 +190,66 @@ export class EnhancedTCMVisualization {
         this.renderer.render(this.scene, this.camera);
     }
     
+    createTCSMaterial() {
+        // Create a shader material for the core TCS vertical gradient
+        return new THREE.ShaderMaterial({
+            uniforms: {
+                mainColor: { value: this.currentColor }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 mainColor;
+                varying vec2 vUv;
+                
+                void main() {
+                    // vUv.y ranges from 0 (bottom) to 1 (top)
+                    // Create a vertical gradient: black -> main color -> white
+                    vec3 color;
+                    
+                    if (vUv.y < 0.5) {
+                        // Bottom half: black to main color
+                        float t = vUv.y * 2.0; // Normalize to 0-1 range
+                        color = mix(vec3(0.0, 0.0, 0.0), mainColor, t);
+                    } else {
+                        // Top half: main color to white
+                        float t = (vUv.y - 0.5) * 2.0; // Normalize to 0-1 range
+                        color = mix(mainColor, vec3(1.0, 1.0, 1.0), t);
+                    }
+                    
+                    gl_FragColor = vec4(color, 0.8); // 0.8 for slight transparency
+                }
+            `,
+            side: THREE.DoubleSide,
+            transparent: true
+        });
+    }
+    
     setColor(color) {
         this.currentColor = color;
         
         // Update materials
         if (this.cylinder && this.innerCylinder && this.centerLine) {
-            this.cylinder.material.color = this.currentColor;
+            // For shader materials, update the uniform
+            if (this.cylinder.material.type === 'ShaderMaterial') {
+                if (this.cylinder.material.uniforms.mainColor) {
+                    this.cylinder.material.uniforms.mainColor.value = this.currentColor;
+                }
+                
+                // For circular gradient, update both colors
+                if (this.showCircularGradient && this.cylinder.material.uniforms.color1) {
+                    this.cylinder.material.uniforms.color1.value = this.currentColor;
+                }
+            } else {
+                // For standard materials, update color property
+                this.cylinder.material.color = this.currentColor;
+            }
+            
             this.innerCylinder.material.color = this.currentColor;
             this.centerLine.material.color = this.currentColor;
             this.centerLine.material.emissive = this.currentColor;
@@ -206,6 +266,11 @@ export class EnhancedTCMVisualization {
                         child.material.color = this.currentColor;
                     }
                 });
+            }
+            
+            // Update original material color for future use
+            if (this.originalCylinderMaterial) {
+                this.originalCylinderMaterial.color = this.currentColor;
             }
         }
         
@@ -256,9 +321,8 @@ export class EnhancedTCMVisualization {
                 // Apply circular gradient material
                 this.applyCircularGradient();
             } else {
-                // Restore original material type and color
-                this.cylinder.material = this.originalCylinderMaterial.clone();
-                this.cylinder.material.color = this.currentColor;
+                // Restore TCS core material (vertical gradient)
+                this.cylinder.material = this.createTCSMaterial();
                 
                 // Update other elements if needed
                 if (this.showGradient) {
@@ -272,9 +336,10 @@ export class EnhancedTCMVisualization {
         if (!this.cylinder) return;
         
         // Create a shader material for the circular gradient
+        // This combines both the vertical TCS gradient and the circular gradient
         const gradientMaterial = new THREE.ShaderMaterial({
             uniforms: {
-                color1: { value: this.currentColor },
+                mainColor: { value: this.currentColor },
                 color2: { value: this.complementaryColor }
             },
             vertexShader: `
@@ -285,18 +350,31 @@ export class EnhancedTCMVisualization {
                 }
             `,
             fragmentShader: `
-                uniform vec3 color1;
+                uniform vec3 mainColor;
                 uniform vec3 color2;
                 varying vec2 vUv;
                 
                 void main() {
-                    // Calculate angle around the cylinder (0 to 1)
+                    // Calculate vertical gradient (TCS core functionality)
+                    vec3 verticalColor;
+                    if (vUv.y < 0.5) {
+                        // Bottom half: black to main color
+                        float t = vUv.y * 2.0;
+                        verticalColor = mix(vec3(0.0, 0.0, 0.0), mainColor, t);
+                    } else {
+                        // Top half: main color to white
+                        float t = (vUv.y - 0.5) * 2.0;
+                        verticalColor = mix(mainColor, vec3(1.0, 1.0, 1.0), t);
+                    }
+                    
+                    // Calculate circular gradient
                     float angle = atan(vUv.x - 0.5, vUv.y - 0.5) / (2.0 * 3.14159) + 0.5;
                     
-                    // Mix between the two colors based on the angle
-                    vec3 color = mix(color1, color2, angle);
+                    // Mix the vertical gradient with the circular gradient
+                    // Use the vertical color as the first color in the circular gradient
+                    vec3 finalColor = mix(verticalColor, color2, angle * 0.5);
                     
-                    gl_FragColor = vec4(color, 0.8); // 0.8 for slight transparency
+                    gl_FragColor = vec4(finalColor, 0.8);
                 }
             `,
             side: THREE.DoubleSide,
