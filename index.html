@@ -5,6 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Textile Color System Visualizer</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
             /* Light theme (default) - Neutral colors */
@@ -221,12 +223,21 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px var(--shadow-color);
+            font-size: 18px;
+            padding: 0;
+            outline: none;
         }
         
         .reset-button:hover {
             background-color: var(--selector-active-bg);
             color: var(--selector-active-text);
             transform: rotate(30deg);
+        }
+        
+        /* Ensure the icon is properly sized and centered */
+        .reset-button i {
+            display: block;
+            line-height: 1;
         }
     </style>
   </head>
@@ -241,7 +252,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 style="margin: 0;">Color Selection</h2>
                     <button id="resetButton" class="reset-button" title="Reset to default view">
-                        <i class="fas fa-undo-alt"></i>
+                        <i class="fas fa-rotate"></i>
                     </button>
                 </div>
                 
