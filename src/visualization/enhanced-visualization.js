@@ -22,6 +22,7 @@ export class EnhancedTCMVisualization {
         this.useGrayLining = false; // Default to complementary color lining
         this.showCircularGradient = false; // Default to no circular gradient
         this.isDarkMode = false; // Default to light mode
+        this.originalCylinderMaterial = null; // Store original material
         
         this.init();
     }
@@ -131,6 +132,7 @@ export class EnhancedTCMVisualization {
             opacity: 0.8
         });
         this.cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        this.originalCylinderMaterial = cylinderMaterial.clone(); // Store original material
         this.scene.add(this.cylinder);
         
         // Create inner cylinder for depth perception
@@ -254,8 +256,14 @@ export class EnhancedTCMVisualization {
                 // Apply circular gradient material
                 this.applyCircularGradient();
             } else {
-                // Restore normal material
-                this.setColor(this.currentColor);
+                // Restore original material type and color
+                this.cylinder.material = this.originalCylinderMaterial.clone();
+                this.cylinder.material.color = this.currentColor;
+                
+                // Update other elements if needed
+                if (this.showGradient) {
+                    this.updateGradient();
+                }
             }
         }
     }
