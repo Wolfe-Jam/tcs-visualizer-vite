@@ -182,11 +182,19 @@ export function setupUI(visualization) {
         });
     }
     
-    // Gradient toggle
+    // Lining toggle (formerly gradient toggle)
     const gradientToggle = document.getElementById('gradientToggle');
     if (gradientToggle) {
         gradientToggle.addEventListener('change', (e) => {
             visualization.toggleGradient(e.target.checked);
+        });
+    }
+    
+    // Gray lining toggle
+    const grayLiningToggle = document.getElementById('grayLiningToggle');
+    if (grayLiningToggle) {
+        grayLiningToggle.addEventListener('change', (e) => {
+            visualization.toggleGrayLining(e.target.checked);
         });
     }
     

@@ -18,6 +18,8 @@ export class EnhancedTCMVisualization {
         this.displayMode = 'semi-transparent'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
+        this.grayLiningColor = new THREE.Color(0x666666); // Gray color for lining
+        this.useGrayLining = false; // Default to complementary color lining
         this.isDarkMode = false; // Default to light mode
         
         this.init();
@@ -231,6 +233,15 @@ export class EnhancedTCMVisualization {
         } else {
             // Reset to solid color
             this.setColor(this.currentColor);
+        }
+    }
+    
+    toggleGrayLining(useGray) {
+        this.useGrayLining = useGray;
+        
+        if (this.showGradient) {
+            // Update the gradient/lining with the new setting
+            this.updateGradient();
         }
     }
     
@@ -563,7 +574,13 @@ export class EnhancedTCMVisualization {
         if (this.cylinder && this.innerCylinder) {
             // For demonstration, we'll just set different colors to different parts
             this.cylinder.material.color = this.currentColor;
-            this.innerCylinder.material.color = this.complementaryColor;
+            
+            // Use gray lining if enabled, otherwise use complementary color
+            if (this.useGrayLining) {
+                this.innerCylinder.material.color = this.grayLiningColor;
+            } else {
+                this.innerCylinder.material.color = this.complementaryColor;
+            }
         }
     }
     
