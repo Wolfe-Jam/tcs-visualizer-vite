@@ -10,11 +10,12 @@ export class EnhancedTCMVisualization {
         this.cylinder = null;
         this.innerCylinder = null;
         this.centerLine = null;
+        this.knitPattern = null;
         this.gridHelper = null;
         this.rotationSpeed = 0.005;
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
-        this.displayMode = 'semi-transparent'; // Options: 'wireframe', 'semi-transparent', 'solid'
+        this.displayMode = 'semi-transparent'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
         
@@ -138,6 +139,9 @@ export class EnhancedTCMVisualization {
         this.innerCylinder = new THREE.Mesh(innerCylinderGeometry, innerCylinderMaterial);
         this.scene.add(this.innerCylinder);
         
+        // Create knit pattern mesh (hidden by default)
+        this.createKnitPattern();
+        
         // Store original materials for later reference
         this.originalMaterials = {
             cylinder: this.cylinder.material.clone(),
@@ -182,6 +186,20 @@ export class EnhancedTCMVisualization {
             this.innerCylinder.material.color = this.currentColor;
             this.centerLine.material.color = this.currentColor;
             this.centerLine.material.emissive = this.currentColor;
+            
+            // Update knit pattern color if it exists
+            if (this.knitPattern) {
+                if (this.knitPattern.material) {
+                    this.knitPattern.material.color = this.currentColor;
+                }
+                
+                // Update child lines too
+                this.knitPattern.children.forEach(child => {
+                    if (child.material) {
+                        child.material.color = this.currentColor;
+                    }
+                });
+            }
         }
         
         // Update gradient if enabled
@@ -299,9 +317,73 @@ export class EnhancedTCMVisualization {
         }
     }
     
+    createKnitPattern() {
+        // Create a more detailed cylinder for the knit pattern
+        const knitGeometry = new THREE.CylinderGeometry(1.01, 1.01, 3, 32, 16, true);
+        
+        // Create lines to represent the knit pattern
+        const linesMaterial = new THREE.LineBasicMaterial({
+            color: this.currentColor,
+            transparent: true,
+            opacity: 0.9,
+            linewidth: 1 // Note: linewidth > 1 not supported in WebGL
+        });
+        
+        // Create diagonal lines for the knit pattern
+        const knitEdges = new THREE.EdgesGeometry(knitGeometry, 15); // 15 degrees threshold
+        this.knitPattern = new THREE.LineSegments(knitEdges, linesMaterial);
+        
+        // Add additional diagonal lines to create a more textile-like pattern
+        const diagonalLines = this.createDiagonalKnitLines(1.01, 3, 16, 32);
+        this.knitPattern.add(diagonalLines);
+        
+        // Hide by default
+        this.knitPattern.visible = false;
+        this.scene.add(this.knitPattern);
+    }
+    
+    createDiagonalKnitLines(radius, height, heightSegments, radialSegments) {
+        const points = [];
+        const angleStep = (Math.PI * 2) / radialSegments;
+        const heightStep = height / heightSegments;
+        
+        // Create diagonal lines in both directions
+        for (let i = 0; i < heightSegments; i++) {
+            const y1 = (i * heightStep) - (height / 2);
+            const y2 = ((i + 1) * heightStep) - (height / 2);
+            
+            for (let j = 0; j < radialSegments; j++) {
+                const angle1 = j * angleStep;
+                const angle2 = ((j + 1) % radialSegments) * angleStep;
+                
+                // First diagonal (bottom-left to top-right)
+                const x1 = radius * Math.cos(angle1);
+                const z1 = radius * Math.sin(angle1);
+                const x2 = radius * Math.cos(angle2);
+                const z2 = radius * Math.sin(angle2);
+                
+                points.push(new THREE.Vector3(x1, y1, z1));
+                points.push(new THREE.Vector3(x2, y2, z2));
+                
+                // Second diagonal (top-left to bottom-right) - creates the cross pattern
+                if (i < heightSegments - 1) {
+                    points.push(new THREE.Vector3(x1, y2, z1));
+                    points.push(new THREE.Vector3(x2, y1, z2));
+                }
+            }
+        }
+        
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        return new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({
+            color: this.currentColor,
+            transparent: true,
+            opacity: 0.7
+        }));
+    }
+    
     setDisplayMode(mode) {
-        // Valid modes: 'wireframe', 'semi-transparent', 'solid'
-        if (!['wireframe', 'semi-transparent', 'solid'].includes(mode)) {
+        // Valid modes: 'knit-pattern', 'semi-transparent', 'solid'
+        if (!['knit-pattern', 'semi-transparent', 'solid'].includes(mode)) {
             console.error('Invalid display mode:', mode);
             return;
         }
@@ -314,16 +396,38 @@ export class EnhancedTCMVisualization {
         this.cylinder.material = this.originalMaterials.cylinder.clone();
         this.innerCylinder.material = this.originalMaterials.innerCylinder.clone();
         
+        // Hide knit pattern by default
+        if (this.knitPattern) {
+            this.knitPattern.visible = false;
+        }
+        
         // Apply the selected display mode
         switch (mode) {
-            case 'wireframe':
-                // Wireframe mode
-                this.cylinder.material.wireframe = true;
-                this.innerCylinder.material.wireframe = true;
+            case 'knit-pattern':
+                // Knit pattern mode - show diagonal knit texture
+                if (this.knitPattern) {
+                    this.knitPattern.visible = true;
+                    
+                    // Update knit pattern color to match current color
+                    if (this.knitPattern.material) {
+                        this.knitPattern.material.color = this.currentColor;
+                    }
+                    
+                    // Make children lines match color too
+                    this.knitPattern.children.forEach(child => {
+                        if (child.material) {
+                            child.material.color = this.currentColor;
+                        }
+                    });
+                }
+                
+                // Make the cylinder semi-transparent to show the knit pattern
                 this.cylinder.material.transparent = true;
                 this.innerCylinder.material.transparent = true;
-                this.cylinder.material.opacity = 1.0;
-                this.innerCylinder.material.opacity = 0.7;
+                this.cylinder.material.opacity = 0.3;
+                this.innerCylinder.material.opacity = 0.2;
+                this.cylinder.material.wireframe = false;
+                this.innerCylinder.material.wireframe = false;
                 break;
                 
             case 'semi-transparent':
