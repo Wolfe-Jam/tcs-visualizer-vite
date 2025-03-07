@@ -45,8 +45,16 @@ export class EnhancedTCMVisualization {
     
     setupCamera() {
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.set(0, 2, 5);
+        
+        // Set a better default camera position - closer and tilted forward
+        this.camera.position.set(0, 3, 4);
         this.camera.lookAt(0, 0, 0);
+        
+        // Store default position for reset functionality
+        this.defaultCameraPosition = {
+            position: new THREE.Vector3(0, 3, 4),
+            lookAt: new THREE.Vector3(0, 0, 0)
+        };
         
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -88,6 +96,9 @@ export class EnhancedTCMVisualization {
         this.controls.screenSpacePanning = false;
         this.controls.minDistance = 2;
         this.controls.maxDistance = 10;
+        
+        // Slightly tilt the controls for a better view
+        this.controls.maxPolarAngle = Math.PI * 0.85; // Limit how far you can orbit vertically
     }
     
     setupLighting() {
@@ -191,6 +202,42 @@ export class EnhancedTCMVisualization {
         } else {
             // Reset to solid color
             this.setColor(this.currentColor);
+        }
+    }
+    
+    resetCamera() {
+        // Reset to default camera position
+        if (this.camera && this.controls) {
+            // Smoothly animate to the default position
+            const duration = 1000; // milliseconds
+            const startPosition = this.camera.position.clone();
+            const startTime = Date.now();
+            
+            const animate = () => {
+                const now = Date.now();
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease function (cubic ease out)
+                const ease = 1 - Math.pow(1 - progress, 3);
+                
+                // Interpolate position
+                this.camera.position.lerpVectors(
+                    startPosition,
+                    this.defaultCameraPosition.position,
+                    ease
+                );
+                
+                // Update controls target
+                this.controls.target.copy(this.defaultCameraPosition.lookAt);
+                this.controls.update();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            
+            animate();
         }
     }
     
