@@ -17,6 +17,7 @@ export class EnhancedTCMVisualization {
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
         this.displayMode = 'solid'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
+        this.invertGridColor = false; // New property for grid color inversion
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
         this.grayLiningColor = new THREE.Color(0x666666); // Gray color for lining
@@ -249,11 +250,13 @@ export class EnhancedTCMVisualization {
                         color = mix(mainColor, vec3(1.0, 1.0, 1.0), t);
                     }
                     
-                    gl_FragColor = vec4(color, 1.0); // 1.0 for full opacity (solid)
+                    // Allow alpha to be controlled by material.opacity
+                    gl_FragColor = vec4(color, 1.0); // Alpha will be modified by material.opacity
                 }
             `,
             side: THREE.DoubleSide, // Render both sides to show back of cylinder
-            transparent: false // Solid by default
+            transparent: false, // Will be set based on display mode
+            opacity: 1.0 // Will be set based on display mode
         });
     }
     
@@ -615,6 +618,11 @@ export class EnhancedTCMVisualization {
         }
     }
     
+    toggleGridColorInversion(invert) {
+        this.invertGridColor = invert;
+        this.updateGridColors();
+    }
+    
     createKnitPattern() {
         // Create a more detailed cylinder for the knit pattern
         const knitGeometry = new THREE.CylinderGeometry(1.01, 1.01, 3, 32, 16, true);
@@ -690,12 +698,39 @@ export class EnhancedTCMVisualization {
     setTheme(isDarkMode) {
         this.isDarkMode = isDarkMode;
         this.updateSceneBackground();
-        
-        // Update grid color for better visibility in dark mode
+        this.updateGridColors();
+    }
+    
+    updateGridColors() {
         if (this.gridHelper) {
-            // In dark mode, make the grid lighter for better contrast
-            const gridColor = this.isDarkMode ? 0x555555 : 0x888888;
-            const gridCenterColor = this.isDarkMode ? 0x666666 : 0x444444;
+            // Determine base colors based on dark mode
+            let gridColor = this.isDarkMode ? 0x555555 : 0x888888;
+            let gridCenterColor = this.isDarkMode ? 0x666666 : 0x444444;
+            
+            // If invert color is enabled, use complementary colors
+            if (this.invertGridColor) {
+                // Convert to THREE.Color to use .getHSL and .setHSL methods
+                const tempColor = new THREE.Color(gridColor);
+                const tempCenterColor = new THREE.Color(gridCenterColor);
+                
+                // Get HSL values
+                const hsl = {};
+                const hslCenter = {};
+                tempColor.getHSL(hsl);
+                tempCenterColor.getHSL(hslCenter);
+                
+                // Invert hue (add 0.5 to get complementary color in HSL space)
+                hsl.h = (hsl.h + 0.5) % 1.0;
+                hslCenter.h = (hslCenter.h + 0.5) % 1.0;
+                
+                // Set the new HSL values
+                tempColor.setHSL(hsl.h, hsl.s, hsl.l);
+                tempCenterColor.setHSL(hslCenter.h, hslCenter.s, hslCenter.l);
+                
+                // Convert back to hex
+                gridColor = tempColor.getHex();
+                gridCenterColor = tempCenterColor.getHex();
+            }
             
             // Update grid colors (need to recreate the grid as THREE.js doesn't allow changing colors directly)
             this.scene.remove(this.gridHelper);
@@ -764,8 +799,8 @@ export class EnhancedTCMVisualization {
                 this.innerCylinder.material.wireframe = false;
                 this.cylinder.material.transparent = true;
                 this.innerCylinder.material.transparent = true;
-                this.cylinder.material.opacity = 0.8;
-                this.innerCylinder.material.opacity = 0.5;
+                this.cylinder.material.opacity = 0.4; // More transparent
+                this.innerCylinder.material.opacity = 0.2; // More transparent
                 break;
                 
             case 'solid':
@@ -779,15 +814,27 @@ export class EnhancedTCMVisualization {
                 break;
         }
         
-        // Apply TCS material with consistent rendering of both sides
-        if (mode === 'solid' || mode === 'semi-transparent') {
-            // Create a new TCS material with the current settings
+        // Apply appropriate materials based on display mode
+        if (mode === 'solid') {
+            // Create a new TCS material with solid settings
             const tcsMaterial = this.createTCSMaterial();
-            tcsMaterial.transparent = this.cylinder.material.transparent;
-            tcsMaterial.opacity = this.cylinder.material.opacity;
+            tcsMaterial.transparent = false;
+            tcsMaterial.opacity = 1.0;
             
             // Apply the material to the cylinder
             this.cylinder.material = tcsMaterial;
+        } else if (mode === 'semi-transparent') {
+            // For semi-transparent mode, create a material that's actually transparent
+            const tcsMaterial = this.createTCSMaterial();
+            tcsMaterial.transparent = true;
+            tcsMaterial.opacity = 0.4;
+            
+            // Apply the material to the cylinder
+            this.cylinder.material = tcsMaterial;
+            
+            // Make sure the inner cylinder is also transparent
+            this.innerCylinder.material.transparent = true;
+            this.innerCylinder.material.opacity = 0.2;
         }
         
         // Update colors to ensure they're applied with the new material settings

@@ -237,6 +237,14 @@ export function setupUI(visualization) {
         });
     }
     
+    // Invert Grid Color toggle
+    const invertGridColorToggle = document.getElementById('invertGridColorToggle');
+    if (invertGridColorToggle) {
+        invertGridColorToggle.addEventListener('change', (e) => {
+            visualization.toggleGridColorInversion(e.target.checked);
+        });
+    }
+    
     // Display mode radio buttons
     const displayModeRadios = document.querySelectorAll('input[name="displayMode"]');
     if (displayModeRadios.length > 0) {

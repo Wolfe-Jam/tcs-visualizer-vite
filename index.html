@@ -288,12 +288,22 @@
                     </style>
                 </div>
                 
-                <div class="toggle-container" style="margin-bottom: 15px;">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="gridToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                    <span>Show Grid</span>
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="gridToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Show Grid</span>
+                    </div>
+                    
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="invertGridColorToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Invert Color</span>
+                    </div>
                 </div>
                 
                 <div style="margin-bottom: 15px;">
@@ -303,12 +313,12 @@
                             <input type="radio" id="knitPatternMode" name="displayMode" value="knit-pattern" style="display: none;">
                             Construction
                         </label>
-                        <label class="display-mode-btn selected" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-active-bg); color: var(--selector-active-text); font-weight: bold; transition: all 0.2s ease;" for="transparentMode">
-                            <input type="radio" id="transparentMode" name="displayMode" value="semi-transparent" checked style="display: none;">
+                        <label class="display-mode-btn" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-bg); color: var(--selector-text); transition: all 0.2s ease;" for="transparentMode">
+                            <input type="radio" id="transparentMode" name="displayMode" value="semi-transparent" style="display: none;">
                             Transparent
                         </label>
-                        <label class="display-mode-btn" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-bg); color: var(--selector-text); transition: all 0.2s ease;" for="solidMode">
-                            <input type="radio" id="solidMode" name="displayMode" value="solid" style="display: none;">
+                        <label class="display-mode-btn selected" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-active-bg); color: var(--selector-active-text); font-weight: bold; transition: all 0.2s ease;" for="solidMode">
+                            <input type="radio" id="solidMode" name="displayMode" value="solid" checked style="display: none;">
                             Solid
                         </label>
                     </div>
