@@ -115,10 +115,69 @@ export function setupUI(visualization) {
         });
     }
     
+    // Complementary HEX input field event listener
+    const complementaryHexInput = document.getElementById('complementaryColorHex');
+    if (complementaryHexInput) {
+        complementaryHexInput.addEventListener('input', (e) => {
+            let value = e.target.value;
+            
+            // Ensure the value starts with #
+            if (!value.startsWith('#')) {
+                value = '#' + value;
+                complementaryHexInput.value = value;
+            }
+            
+            // Validate hex color format
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            if (hexRegex.test(value)) {
+                // Convert to 6-digit hex if it's 3-digit
+                if (value.length === 4) {
+                    const r = value[1];
+                    const g = value[2];
+                    const b = value[3];
+                    value = `#${r}${r}${g}${g}${b}${b}`;
+                    complementaryHexInput.value = value;
+                }
+                
+                // Calculate the new main color (inverse of complementary)
+                const mainColor = calculateComplementaryColor(value);
+                
+                // Update the visualization with the new colors
+                visualization.setColor(new THREE.Color(mainColor));
+                visualization.setComplementaryColor(new THREE.Color(value));
+                
+                // Update UI elements
+                document.getElementById('colorSwatch').style.backgroundColor = mainColor;
+                document.getElementById('complementaryColorSwatch').style.backgroundColor = value;
+                colorHexInput.value = mainColor.toUpperCase();
+                
+                // Update gradient bar
+                const gradientBar = document.getElementById('gradientBar');
+                if (gradientBar) {
+                    gradientBar.style.backgroundImage = `linear-gradient(to right, ${mainColor}, ${value})`;
+                }
+            }
+        });
+        
+        // Update on blur to ensure valid format
+        complementaryHexInput.addEventListener('blur', (e) => {
+            let value = e.target.value;
+            
+            // Default to a valid color if invalid
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            if (!hexRegex.test(value)) {
+                // Reset to the current complementary color
+                value = complementaryHexInput.value;
+                complementaryHexInput.value = value.toUpperCase();
+            }
+        });
+    }
+    
     // Add click events to color swatches and gradient bar
     const colorSwatch = document.getElementById('colorSwatch');
     const complementaryColorSwatch = document.getElementById('complementaryColorSwatch');
     const gradientBar = document.getElementById('gradientBar');
+    const complementaryColorHexInput = document.getElementById('complementaryColorHex');
     
     // Function to open color picker
     const openColorPicker = (e) => {
@@ -130,9 +189,23 @@ export function setupUI(visualization) {
         colorPicker.click();
     };
     
+    // Function to promote complementary color to main color
+    const promoteComplementaryColor = (e) => {
+        // Prevent event bubbling
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Get the complementary color
+        const complementaryColor = complementaryColorHexInput.value;
+        
+        // Set it as the main color
+        colorPicker.value = complementaryColor;
+        updateColorDisplay(complementaryColor, visualization);
+    };
+    
     // Add click event listeners
     if (colorSwatch) colorSwatch.addEventListener('click', openColorPicker);
-    if (complementaryColorSwatch) complementaryColorSwatch.addEventListener('click', openColorPicker);
+    if (complementaryColorSwatch) complementaryColorSwatch.addEventListener('click', promoteComplementaryColor);
     if (gradientBar) gradientBar.addEventListener('click', openColorPicker);
     
     // Rotation speed slider
