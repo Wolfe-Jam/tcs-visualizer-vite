@@ -163,15 +163,8 @@
             <div id="visualization"></div>
         </div>
         <div class="controls">
-            <div class="control-group" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="control-group">
                 <h2>Color Selection</h2>
-                <div class="toggle-container">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="themeToggle">
-                        <span class="slider"></span>
-                    </label>
-                    <span>Dark Mode</span>
-                </div>
                 <div class="color-display">
                     <div id="colorSwatch" class="color-swatch"></div>
                     <div class="color-info">
@@ -179,7 +172,7 @@
                         <p>Hex: <span id="colorHex">#FF5733</span></p>
                     </div>
                 </div>
-                <input type="color" id="colorPicker" value="#FF5733">
+                <input type="color" id="colorPicker" value="#FF5733" style="margin-bottom: 15px;">
                 
                 <div class="toggle-container">
                     <label class="toggle-switch">
@@ -199,7 +192,16 @@
             </div>
             
             <div class="control-group">
-                <h2>Visualization Controls</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 style="margin: 0;">Visualization Controls</h2>
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Dark Mode</span>
+                    </div>
+                </div>
                 <div style="margin-bottom: 15px;">
                     <label for="rotationSpeed">Rotation Speed</label>
                     <input type="range" id="rotationSpeed" min="0" max="0.05" step="0.001" value="0.005">
