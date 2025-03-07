@@ -18,6 +18,7 @@ export class EnhancedTCMVisualization {
         this.showGrid = true; // Default to showing grid
         this.showMesh = false; // Default to not showing mesh in all modes
         this.displayMode = 'solid'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
+        this.transparencyLevel = 0.3; // Default transparency level
         this.invertMeshColor = false; // Property for wireframe mesh color inversion
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
@@ -677,6 +678,29 @@ export class EnhancedTCMVisualization {
         }
     }
     
+    setTransparencyLevel(level) {
+        // Ensure level is between 0 and 1
+        this.transparencyLevel = Math.max(0, Math.min(1, level));
+        
+        // Update materials if they exist
+        if (this.cylinder && this.innerCylinder) {
+            // Only update if in transparent mode or if forcing transparency in other modes
+            if (this.displayMode === 'semi-transparent') {
+                // Calculate inner cylinder transparency (always more transparent)
+                const innerTransparency = Math.max(0.05, this.transparencyLevel * 0.5);
+                
+                // Update the materials
+                if (this.cylinder.material.uniforms && this.cylinder.material.uniforms.opacity) {
+                    this.cylinder.material.uniforms.opacity.value = this.transparencyLevel;
+                }
+                
+                if (this.innerCylinder.material.uniforms && this.innerCylinder.material.uniforms.opacity) {
+                    this.innerCylinder.material.uniforms.opacity.value = innerTransparency;
+                }
+            }
+        }
+    }
+    
     createKnitPattern() {
         // Create a more detailed cylinder for the knit pattern
         const knitGeometry = new THREE.CylinderGeometry(1.01, 1.01, 3, 32, 16, true);
@@ -850,15 +874,16 @@ export class EnhancedTCMVisualization {
             this.innerCylinder.material = innerSolidMaterial;
             
         } else if (mode === 'semi-transparent') {
-            // Create a transparent material with gradient
-            const transparentMaterial = this.createTCSMaterial(this.currentColor, true, 0.3);
+            // Create a transparent material with gradient using current transparency level
+            const transparentMaterial = this.createTCSMaterial(this.currentColor, true, this.transparencyLevel);
             
             // Apply the material to the cylinder
             this.cylinder.material = transparentMaterial;
             
-            // Create a transparent material for inner cylinder
+            // Create a transparent material for inner cylinder (half as transparent)
             const innerColor = this.useGrayLining ? this.grayLiningColor : this.complementaryColor;
-            const innerTransparentMaterial = this.createTCSMaterial(innerColor, true, 0.15);
+            const innerTransparency = Math.max(0.05, this.transparencyLevel * 0.5);
+            const innerTransparentMaterial = this.createTCSMaterial(innerColor, true, innerTransparency);
             
             // Apply the material to the inner cylinder
             this.innerCylinder.material = innerTransparentMaterial;

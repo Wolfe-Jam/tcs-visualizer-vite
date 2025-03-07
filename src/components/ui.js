@@ -253,6 +253,19 @@ export function setupUI(visualization) {
         });
     }
     
+    // Transparency level slider
+    const transparencySlider = document.getElementById('transparencyLevel');
+    if (transparencySlider) {
+        // Set initial value from visualization
+        transparencySlider.value = visualization.transparencyLevel;
+        
+        // Update when slider is moved
+        transparencySlider.addEventListener('input', (e) => {
+            const level = parseFloat(e.target.value);
+            visualization.setTransparencyLevel(level);
+        });
+    }
+    
     // Display mode radio buttons
     const displayModeRadios = document.querySelectorAll('input[name="displayMode"]');
     if (displayModeRadios.length > 0) {
