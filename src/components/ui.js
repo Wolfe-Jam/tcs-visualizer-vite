@@ -190,7 +190,7 @@ export function setupUI(visualization) {
         });
     }
     
-    // Gray lining toggle
+    // Tonal toggle (for gray/tonal lining)
     const grayLiningToggle = document.getElementById('grayLiningToggle');
     if (grayLiningToggle) {
         grayLiningToggle.addEventListener('change', (e) => {
