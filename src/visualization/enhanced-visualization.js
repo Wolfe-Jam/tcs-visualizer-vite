@@ -312,29 +312,13 @@ export class EnhancedTCMVisualization {
     }
     
     zoomToFit() {
-        if (!this.camera || !this.controls || !this.cylinder) {
+        if (!this.camera || !this.controls) {
             return;
         }
         
-        // Get the bounding box of the visualization
-        const boundingBox = new THREE.Box3().setFromObject(this.cylinder);
-        const center = new THREE.Vector3();
-        boundingBox.getCenter(center);
-        
-        // Calculate the size of the bounding box
-        const size = new THREE.Vector3();
-        boundingBox.getSize(size);
-        
-        // Calculate the distance needed to fit the object in view
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = this.camera.fov * (Math.PI / 180);
-        const distance = (maxDim / 2) / Math.tan(fov / 2) * 1.2; // 1.2 is a padding factor
-        
-        // Set a nice viewing angle (slightly from above and to the side)
-        const direction = new THREE.Vector3(0.5, 0.7, 1).normalize();
-        
-        // Calculate the new camera position
-        const newPosition = center.clone().add(direction.clone().multiplyScalar(distance));
+        // Use the user's preferred camera position instead of calculating one
+        const newPosition = new THREE.Vector3(0.005039515598749067, 2.3361920342575657, 1.9404878995926225);
+        const center = new THREE.Vector3(0, 0, 0); // Target center
         
         // Animate to the new position
         const duration = 1000; // milliseconds
