@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Textile Color System Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .visualization-container {
+            width: 100%;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        #visualization {
+            width: 100%;
+            height: 100%;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 250px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .color-display {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .color-swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .color-info {
+            flex: 1;
+        }
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h1>Textile Color System Visualizer</h1>
+        <div class="visualization-container">
+            <div id="visualization"></div>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <h2>Color Selection</h2>
+                <div class="color-display">
+                    <div id="colorSwatch" class="color-swatch"></div>
+                    <div class="color-info">
+                        <h3>Current Color</h3>
+                        <p>Hex: <span id="colorHex">#FF5733</span></p>
+                    </div>
+                </div>
+                <input type="color" id="colorPicker" value="#FF5733">
+                
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="gradientToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span>Show Gradient</span>
+                </div>
+                
+                <div class="color-display" style="margin-top: 15px;">
+                    <div id="complementaryColorSwatch" class="color-swatch"></div>
+                    <div class="color-info">
+                        <h3>Complementary</h3>
+                        <p>Creates visual balance</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h2>Visualization Controls</h2>
+                <div style="margin-bottom: 15px;">
+                    <label for="rotationSpeed">Rotation Speed</label>
+                    <input type="range" id="rotationSpeed" min="0" max="0.05" step="0.001" value="0.005">
+                </div>
+                <button id="resetCamera">Reset Camera</button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
