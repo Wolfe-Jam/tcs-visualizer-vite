@@ -332,6 +332,28 @@ export class EnhancedTCMVisualization {
         }
     }
     
+    /**
+     * Reset the visualization to the default core view
+     * - Main color only (with vertical gradient: black -> main color -> white)
+     * - No lining, no tonal effects, no circular gradient
+     */
+    resetToDefaultView() {
+        // Reset state flags
+        this.showGradient = false;
+        this.useGrayLining = false;
+        this.showCircularGradient = false;
+        
+        // Restore the core TCS material (vertical gradient)
+        if (this.cylinder) {
+            this.cylinder.material = this.createTCSMaterial();
+        }
+        
+        // Make sure inner cylinder is not visible (no lining)
+        if (this.innerCylinder) {
+            this.innerCylinder.visible = false;
+        }
+    }
+    
     applyCircularGradient() {
         if (!this.cylinder) return;
         

@@ -206,6 +206,20 @@ export function setupUI(visualization) {
         });
     }
     
+    // Reset button
+    const resetButton = document.getElementById('resetButton');
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            // Reset all toggles to their default state (unchecked)
+            if (gradientToggle) gradientToggle.checked = false;
+            if (grayLiningToggle) grayLiningToggle.checked = false;
+            if (circularGradientToggle) circularGradientToggle.checked = false;
+            
+            // Reset visualization to default state
+            visualization.resetToDefaultView();
+        });
+    }
+    
     // Grid toggle
     const gridToggle = document.getElementById('gridToggle');
     if (gridToggle) {
