@@ -181,6 +181,24 @@
                     <span>Show Grid</span>
                 </div>
                 
+                <div style="margin-bottom: 15px;">
+                    <label>Display Mode</label>
+                    <div class="display-mode-selector" style="display: flex; margin-top: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden;">
+                        <label style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid #ccc;" for="wireframeMode">
+                            <input type="radio" id="wireframeMode" name="displayMode" value="wireframe" style="display: none;">
+                            Wireframe
+                        </label>
+                        <label style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid #ccc; background-color: #3498db; color: white;" for="transparentMode">
+                            <input type="radio" id="transparentMode" name="displayMode" value="semi-transparent" checked style="display: none;">
+                            Transparent
+                        </label>
+                        <label style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em;" for="solidMode">
+                            <input type="radio" id="solidMode" name="displayMode" value="solid" style="display: none;">
+                            Solid
+                        </label>
+                    </div>
+                </div>
+                
                 <div style="display: flex; gap: 10px;">
                     <button id="resetCamera">Reset Camera</button>
                     <button id="setCamera" style="background-color: #27ae60;">Set Camera</button>

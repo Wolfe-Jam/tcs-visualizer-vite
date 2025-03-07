@@ -14,6 +14,7 @@ export class EnhancedTCMVisualization {
         this.rotationSpeed = 0.005;
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
+        this.displayMode = 'semi-transparent'; // Options: 'wireframe', 'semi-transparent', 'solid'
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
         
@@ -136,6 +137,12 @@ export class EnhancedTCMVisualization {
         });
         this.innerCylinder = new THREE.Mesh(innerCylinderGeometry, innerCylinderMaterial);
         this.scene.add(this.innerCylinder);
+        
+        // Store original materials for later reference
+        this.originalMaterials = {
+            cylinder: this.cylinder.material.clone(),
+            innerCylinder: this.innerCylinder.material.clone()
+        };
         
         // Create center line to represent material absorption
         const centerLineGeometry = new THREE.CylinderGeometry(0.05, 0.05, 3, 8);
@@ -290,6 +297,58 @@ export class EnhancedTCMVisualization {
         if (this.gridHelper) {
             this.gridHelper.visible = showGrid;
         }
+    }
+    
+    setDisplayMode(mode) {
+        // Valid modes: 'wireframe', 'semi-transparent', 'solid'
+        if (!['wireframe', 'semi-transparent', 'solid'].includes(mode)) {
+            console.error('Invalid display mode:', mode);
+            return;
+        }
+        
+        this.displayMode = mode;
+        
+        if (!this.cylinder || !this.innerCylinder) return;
+        
+        // Reset materials to original state first
+        this.cylinder.material = this.originalMaterials.cylinder.clone();
+        this.innerCylinder.material = this.originalMaterials.innerCylinder.clone();
+        
+        // Apply the selected display mode
+        switch (mode) {
+            case 'wireframe':
+                // Wireframe mode
+                this.cylinder.material.wireframe = true;
+                this.innerCylinder.material.wireframe = true;
+                this.cylinder.material.transparent = true;
+                this.innerCylinder.material.transparent = true;
+                this.cylinder.material.opacity = 1.0;
+                this.innerCylinder.material.opacity = 0.7;
+                break;
+                
+            case 'semi-transparent':
+                // Semi-transparent mode (default)
+                this.cylinder.material.wireframe = false;
+                this.innerCylinder.material.wireframe = false;
+                this.cylinder.material.transparent = true;
+                this.innerCylinder.material.transparent = true;
+                this.cylinder.material.opacity = 0.8;
+                this.innerCylinder.material.opacity = 0.5;
+                break;
+                
+            case 'solid':
+                // Solid mode
+                this.cylinder.material.wireframe = false;
+                this.innerCylinder.material.wireframe = false;
+                this.cylinder.material.transparent = false;
+                this.innerCylinder.material.transparent = false;
+                this.cylinder.material.opacity = 1.0;
+                this.innerCylinder.material.opacity = 1.0;
+                break;
+        }
+        
+        // Update colors to ensure they're applied with the new material settings
+        this.setColor(this.currentColor);
     }
     
     updateGradient() {

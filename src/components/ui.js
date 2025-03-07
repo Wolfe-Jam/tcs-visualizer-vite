@@ -94,6 +94,29 @@ export function setupUI(visualization) {
         });
     }
     
+    // Display mode radio buttons
+    const displayModeRadios = document.querySelectorAll('input[name="displayMode"]');
+    if (displayModeRadios.length > 0) {
+        // Add event listeners to all radio buttons
+        displayModeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    // Update the visualization display mode
+                    visualization.setDisplayMode(e.target.value);
+                    
+                    // Update the UI - highlight the selected option
+                    document.querySelectorAll('.display-mode-selector label').forEach(label => {
+                        label.style.backgroundColor = '';
+                        label.style.color = '';
+                    });
+                    
+                    e.target.parentElement.style.backgroundColor = '#3498db';
+                    e.target.parentElement.style.color = 'white';
+                }
+            });
+        });
+    }
+    
     // Initialize with default color
     updateColorDisplay('#FF5733', visualization);
 }
