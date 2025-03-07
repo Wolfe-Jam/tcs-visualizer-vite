@@ -10,8 +10,10 @@ export class EnhancedTCMVisualization {
         this.cylinder = null;
         this.innerCylinder = null;
         this.centerLine = null;
+        this.gridHelper = null;
         this.rotationSpeed = 0.005;
         this.showGradient = false;
+        this.showGrid = true; // Default to showing grid
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
         
@@ -35,8 +37,8 @@ export class EnhancedTCMVisualization {
         this.scene.background = new THREE.Color(0xf0f0f0);
         
         // Add a grid helper for better spatial awareness
-        const gridHelper = new THREE.GridHelper(10, 10);
-        this.scene.add(gridHelper);
+        this.gridHelper = new THREE.GridHelper(10, 10);
+        this.scene.add(this.gridHelper);
         
         // Add axes helper
         const axesHelper = new THREE.AxesHelper(5);
@@ -280,6 +282,14 @@ export class EnhancedTCMVisualization {
             return true;
         }
         return false;
+    }
+    
+    toggleGrid(showGrid) {
+        this.showGrid = showGrid;
+        
+        if (this.gridHelper) {
+            this.gridHelper.visible = showGrid;
+        }
     }
     
     updateGradient() {

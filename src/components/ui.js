@@ -86,6 +86,14 @@ export function setupUI(visualization) {
         });
     }
     
+    // Grid toggle
+    const gridToggle = document.getElementById('gridToggle');
+    if (gridToggle) {
+        gridToggle.addEventListener('change', (e) => {
+            visualization.toggleGrid(e.target.checked);
+        });
+    }
+    
     // Initialize with default color
     updateColorDisplay('#FF5733', visualization);
 }
