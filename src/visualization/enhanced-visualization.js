@@ -311,6 +311,96 @@ export class EnhancedTCMVisualization {
         return false;
     }
     
+    zoomToFit() {
+        if (!this.camera || !this.controls || !this.cylinder) {
+            return;
+        }
+        
+        // Get the bounding box of the visualization
+        const boundingBox = new THREE.Box3().setFromObject(this.cylinder);
+        const center = new THREE.Vector3();
+        boundingBox.getCenter(center);
+        
+        // Calculate the size of the bounding box
+        const size = new THREE.Vector3();
+        boundingBox.getSize(size);
+        
+        // Calculate the distance needed to fit the object in view
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fov = this.camera.fov * (Math.PI / 180);
+        const distance = (maxDim / 2) / Math.tan(fov / 2) * 1.2; // 1.2 is a padding factor
+        
+        // Set a nice viewing angle (slightly from above and to the side)
+        const direction = new THREE.Vector3(0.5, 0.7, 1).normalize();
+        
+        // Calculate the new camera position
+        const newPosition = center.clone().add(direction.clone().multiplyScalar(distance));
+        
+        // Animate to the new position
+        const duration = 1000; // milliseconds
+        const startPosition = this.camera.position.clone();
+        const startTarget = this.controls.target.clone();
+        const startTime = Date.now();
+        
+        const animate = () => {
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease function (cubic ease out)
+            const ease = 1 - Math.pow(1 - progress, 3);
+            
+            // Interpolate position
+            this.camera.position.lerpVectors(
+                startPosition,
+                newPosition,
+                ease
+            );
+            
+            // Interpolate target (look at center)
+            this.controls.target.lerpVectors(
+                startTarget,
+                center,
+                ease
+            );
+            
+            this.controls.update();
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        };
+        
+        animate();
+        
+        // Provide visual feedback
+        const notification = document.createElement('div');
+        notification.textContent = 'Zoomed to fit';
+        notification.style.position = 'absolute';
+        notification.style.top = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.backgroundColor = 'rgba(0, 150, 0, 0.8)';
+        notification.style.color = 'white';
+        notification.style.padding = '10px 20px';
+        notification.style.borderRadius = '4px';
+        notification.style.zIndex = '1000';
+        notification.style.transition = 'opacity 0.5s';
+        
+        const container = document.getElementById('visualization');
+        if (container) {
+            container.appendChild(notification);
+            
+            // Fade out and remove after 2 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    container.removeChild(notification);
+                }, 500);
+            }, 2000);
+        }
+    }
+    
     toggleGrid(showGrid) {
         this.showGrid = showGrid;
         

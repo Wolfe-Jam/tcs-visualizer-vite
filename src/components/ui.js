@@ -160,6 +160,14 @@ export function setupUI(visualization) {
         });
     }
     
+    // Zoom to fit button
+    const zoomToFitButton = document.getElementById('zoomToFit');
+    if (zoomToFitButton) {
+        zoomToFitButton.addEventListener('click', () => {
+            visualization.zoomToFit();
+        });
+    }
+    
     // Gradient toggle
     const gradientToggle = document.getElementById('gradientToggle');
     if (gradientToggle) {
