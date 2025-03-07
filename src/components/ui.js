@@ -187,12 +187,19 @@ export function setupUI(visualization) {
                     visualization.setDisplayMode(e.target.value);
                     
                     // Update the UI - highlight the selected option
-                    document.querySelectorAll('.display-mode-selector label').forEach(label => {
-                        label.classList.remove('active');
+                    document.querySelectorAll('.display-mode-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                        btn.style.backgroundColor = 'var(--selector-bg)';
+                        btn.style.color = 'var(--selector-text)';
+                        btn.style.fontWeight = 'normal';
                     });
                     
-                    // Add active class to the selected option
-                    e.target.parentElement.classList.add('active');
+                    // Add selected class and styling to the selected option
+                    const selectedBtn = e.target.parentElement;
+                    selectedBtn.classList.add('selected');
+                    selectedBtn.style.backgroundColor = 'var(--selector-active-bg)';
+                    selectedBtn.style.color = 'var(--selector-active-text)';
+                    selectedBtn.style.fontWeight = 'bold';
                 }
             });
         });

@@ -265,26 +265,26 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label>Display Mode</label>
-                    <div class="display-mode-selector" style="display: flex; margin-top: 8px; background-color: var(--selector-bg); border-radius: 4px; overflow: hidden;">
-                        <label class="mode-option" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); color: var(--selector-text); transition: all 0.2s ease;" for="knitPatternMode">
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <label class="display-mode-btn" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-bg); color: var(--selector-text); transition: all 0.2s ease;" for="knitPatternMode">
                             <input type="radio" id="knitPatternMode" name="displayMode" value="knit-pattern" style="display: none;">
                             Construction
                         </label>
-                        <label class="mode-option active" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); background-color: var(--selector-active-bg); color: var(--selector-active-text); font-weight: bold; transition: all 0.2s ease;" for="transparentMode">
+                        <label class="display-mode-btn selected" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-active-bg); color: var(--selector-active-text); font-weight: bold; transition: all 0.2s ease;" for="transparentMode">
                             <input type="radio" id="transparentMode" name="displayMode" value="semi-transparent" checked style="display: none;">
                             Transparent
                         </label>
-                        <label class="mode-option" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; color: var(--selector-text); transition: all 0.2s ease;" for="solidMode">
+                        <label class="display-mode-btn" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; border-radius: 4px; background-color: var(--selector-bg); color: var(--selector-text); transition: all 0.2s ease;" for="solidMode">
                             <input type="radio" id="solidMode" name="displayMode" value="solid" style="display: none;">
                             Solid
                         </label>
                     </div>
                     <style>
-                        .mode-option:not(.active) {
-                            opacity: 0.7;
+                        .display-mode-btn {
+                            border: 1px solid var(--selector-border);
                         }
-                        .mode-option.active {
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        .display-mode-btn:hover:not(.selected) {
+                            background-color: var(--button-hover);
                         }
                     </style>
                 </div>
@@ -299,10 +299,7 @@
                         background-color: var(--button-hover) !important;
                     }
                     
-                    .mode-option:hover:not(.active) {
-                        background-color: var(--button-hover);
-                        color: var(--button-text);
-                    }
+                    /* Display mode button hover handled in its own style block */
                     
                     .mode-option.active {
                         background-color: var(--selector-active-bg);
