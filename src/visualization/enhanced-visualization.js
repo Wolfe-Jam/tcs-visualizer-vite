@@ -144,13 +144,14 @@ export class EnhancedTCMVisualization {
         
         // Create inner cylinder for depth perception
         const innerCylinderGeometry = new THREE.CylinderGeometry(0.9, 0.9, 3, 32, 1, true);
-        const innerCylinderMaterial = new THREE.MeshStandardMaterial({
-            color: this.currentColor,
-            side: THREE.BackSide,
-            transparent: true,
-            opacity: 0.5
-        });
-        this.innerCylinder = new THREE.Mesh(innerCylinderGeometry, innerCylinderMaterial);
+        
+        // Create inner cylinder with the same gradient pattern
+        const innerTCSMaterial = this.createTCSMaterial(this.complementaryColor);
+        innerTCSMaterial.side = THREE.BackSide;
+        innerTCSMaterial.opacity = 0.5;
+        
+        this.innerCylinder = new THREE.Mesh(innerCylinderGeometry, innerTCSMaterial);
+        this.innerCylinder.visible = false; // Initially hidden
         this.scene.add(this.innerCylinder);
         
         // Create knit pattern mesh (hidden by default)
@@ -199,11 +200,14 @@ export class EnhancedTCMVisualization {
         this.isRotating = isRotating;
     }
     
-    createTCSMaterial() {
+    createTCSMaterial(color) {
         // Create a shader material for the core TCS vertical gradient
+        // If no color is provided, use the current color
+        const materialColor = color || this.currentColor;
+        
         return new THREE.ShaderMaterial({
             uniforms: {
-                mainColor: { value: this.currentColor }
+                mainColor: { value: materialColor }
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -308,8 +312,15 @@ export class EnhancedTCMVisualization {
         if (showGradient) {
             this.updateGradient();
         } else {
-            // Reset to solid color
-            this.setColor(this.currentColor);
+            // Hide inner cylinder when gradient/lining is disabled
+            if (this.innerCylinder) {
+                this.innerCylinder.visible = false;
+            }
+            
+            // Ensure main cylinder has the correct material
+            if (this.cylinder && !this.showCircularGradient) {
+                this.cylinder.material = this.createTCSMaterial();
+            }
         }
     }
     
@@ -742,18 +753,22 @@ export class EnhancedTCMVisualization {
     }
     
     updateGradient() {
-        // Implementation would depend on how you want to visualize the gradient
-        // This is a simplified version
         if (this.cylinder && this.innerCylinder) {
-            // For demonstration, we'll just set different colors to different parts
-            this.cylinder.material.color = this.currentColor;
+            // Make inner cylinder visible when gradient/lining is enabled
+            this.innerCylinder.visible = true;
             
-            // Use gray lining if enabled, otherwise use complementary color
+            // Update inner cylinder with appropriate gradient material
             if (this.useGrayLining) {
-                this.innerCylinder.material.color = this.grayLiningColor;
+                // Use gray lining with the same vertical gradient pattern
+                this.innerCylinder.material = this.createTCSMaterial(this.grayLiningColor);
             } else {
-                this.innerCylinder.material.color = this.complementaryColor;
+                // Use complementary color with the same vertical gradient pattern
+                this.innerCylinder.material = this.createTCSMaterial(this.complementaryColor);
             }
+            
+            // Ensure the inner cylinder uses BackSide rendering and proper opacity
+            this.innerCylinder.material.side = THREE.BackSide;
+            this.innerCylinder.material.opacity = 0.5;
         }
     }
     
