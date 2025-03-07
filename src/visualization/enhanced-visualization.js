@@ -18,6 +18,7 @@ export class EnhancedTCMVisualization {
         this.displayMode = 'semi-transparent'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
+        this.isDarkMode = false; // Default to light mode
         
         this.init();
     }
@@ -36,7 +37,8 @@ export class EnhancedTCMVisualization {
     
     setupScene() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xf0f0f0);
+        // Set initial background color based on theme
+        this.updateSceneBackground();
         
         // Add a grid helper for better spatial awareness
         this.gridHelper = new THREE.GridHelper(10, 10);
@@ -379,6 +381,32 @@ export class EnhancedTCMVisualization {
             transparent: true,
             opacity: 0.7
         }));
+    }
+    
+    updateSceneBackground() {
+        // Get the current theme background color
+        const bgColor = this.isDarkMode ? 0x2a2a2a : 0xf0f0f0;
+        if (this.scene) {
+            this.scene.background = new THREE.Color(bgColor);
+        }
+    }
+    
+    setTheme(isDarkMode) {
+        this.isDarkMode = isDarkMode;
+        this.updateSceneBackground();
+        
+        // Update grid color for better visibility in dark mode
+        if (this.gridHelper) {
+            // In dark mode, make the grid lighter for better contrast
+            const gridColor = this.isDarkMode ? 0x555555 : 0x888888;
+            const gridCenterColor = this.isDarkMode ? 0x666666 : 0x444444;
+            
+            // Update grid colors (need to recreate the grid as THREE.js doesn't allow changing colors directly)
+            this.scene.remove(this.gridHelper);
+            this.gridHelper = new THREE.GridHelper(10, 10, gridCenterColor, gridColor);
+            this.gridHelper.visible = this.showGrid;
+            this.scene.add(this.gridHelper);
+        }
     }
     
     setDisplayMode(mode) {

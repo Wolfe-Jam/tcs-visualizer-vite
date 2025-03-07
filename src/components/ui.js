@@ -117,6 +117,35 @@ export function setupUI(visualization) {
         });
     }
     
+    // Theme toggle (dark/light mode)
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        // Check for user preference in localStorage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
+            if (visualization) {
+                visualization.setTheme(true);
+            }
+        }
+        
+        themeToggle.addEventListener('change', (e) => {
+            const isDarkMode = e.target.checked;
+            
+            // Update HTML attribute for CSS variables
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            
+            // Update visualization theme
+            if (visualization) {
+                visualization.setTheme(isDarkMode);
+            }
+            
+            // Save preference to localStorage
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+    }
+    
     // Initialize with default color
     updateColorDisplay('#FF5733', visualization);
 }
