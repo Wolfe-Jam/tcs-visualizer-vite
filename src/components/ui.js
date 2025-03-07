@@ -29,10 +29,20 @@ export function updateColorDisplay(hexColor, visualization) {
         const complementaryColor = calculateComplementaryColor(hexColor);
         
         // Update UI elements
-        document.getElementById('colorHex').textContent = hexColor;
+        const colorHexInput = document.getElementById('colorHex');
+        const complementaryHexInput = document.getElementById('complementaryColorHex');
+        
+        // Update with uppercase HEX values
+        const upperHexColor = hexColor.toUpperCase();
+        const upperComplementaryColor = complementaryColor.toUpperCase();
+        
+        // Update input values
+        if (colorHexInput) colorHexInput.value = upperHexColor;
+        if (complementaryHexInput) complementaryHexInput.value = upperComplementaryColor;
+        
+        // Update swatch colors
         document.getElementById('colorSwatch').style.backgroundColor = hexColor;
         document.getElementById('complementaryColorSwatch').style.backgroundColor = complementaryColor;
-        document.getElementById('complementaryColorHex').textContent = complementaryColor;
         
         // Update gradient bar
         const gradientBar = document.getElementById('gradientBar');
@@ -59,6 +69,49 @@ export function setupUI(visualization) {
     if (colorPicker) {
         colorPicker.addEventListener('input', (e) => {
             updateColorDisplay(e.target.value, visualization);
+        });
+    }
+    
+    // HEX input field event listener
+    const colorHexInput = document.getElementById('colorHex');
+    if (colorHexInput) {
+        colorHexInput.addEventListener('input', (e) => {
+            let value = e.target.value;
+            
+            // Ensure the value starts with #
+            if (!value.startsWith('#')) {
+                value = '#' + value;
+                colorHexInput.value = value;
+            }
+            
+            // Validate hex color format
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            if (hexRegex.test(value)) {
+                // Convert to 6-digit hex if it's 3-digit
+                if (value.length === 4) {
+                    const r = value[1];
+                    const g = value[2];
+                    const b = value[3];
+                    value = `#${r}${r}${g}${g}${b}${b}`;
+                    colorHexInput.value = value;
+                }
+                
+                // Update color picker and visualization
+                colorPicker.value = value;
+                updateColorDisplay(value, visualization);
+            }
+        });
+        
+        // Update on blur to ensure valid format
+        colorHexInput.addEventListener('blur', (e) => {
+            let value = e.target.value;
+            
+            // Default to a valid color if invalid
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            if (!hexRegex.test(value)) {
+                value = colorPicker.value;
+                colorHexInput.value = value.toUpperCase();
+            }
         });
     }
     
