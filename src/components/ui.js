@@ -214,9 +214,18 @@ export function setupUI(visualization) {
             if (gradientToggle) gradientToggle.checked = false;
             if (grayLiningToggle) grayLiningToggle.checked = false;
             if (circularGradientToggle) circularGradientToggle.checked = false;
+            if (rotationToggle) rotationToggle.checked = false;
             
             // Reset visualization to default state
             visualization.resetToDefaultView();
+        });
+    }
+    
+    // Rotation toggle
+    const rotationToggle = document.getElementById('rotationToggle');
+    if (rotationToggle) {
+        rotationToggle.addEventListener('change', (e) => {
+            visualization.toggleRotation(e.target.checked);
         });
     }
     

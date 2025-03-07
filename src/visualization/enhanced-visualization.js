@@ -13,6 +13,7 @@ export class EnhancedTCMVisualization {
         this.knitPattern = null;
         this.gridHelper = null;
         this.rotationSpeed = 0.005;
+        this.isRotating = false; // Default to no rotation
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
         this.displayMode = 'semi-transparent'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
@@ -175,8 +176,8 @@ export class EnhancedTCMVisualization {
     animate() {
         requestAnimationFrame(() => this.animate());
         
-        // Auto-rotate the visualization
-        if (this.cylinder && this.innerCylinder && this.centerLine) {
+        // Auto-rotate the visualization only if rotation is enabled
+        if (this.isRotating && this.cylinder && this.innerCylinder && this.centerLine) {
             this.cylinder.rotation.y += this.rotationSpeed;
             this.innerCylinder.rotation.y += this.rotationSpeed;
         }
@@ -188,6 +189,14 @@ export class EnhancedTCMVisualization {
         
         // Render the scene
         this.renderer.render(this.scene, this.camera);
+    }
+    
+    /**
+     * Toggle cylinder rotation on/off
+     * @param {boolean} isRotating - Whether the cylinder should rotate
+     */
+    toggleRotation(isRotating) {
+        this.isRotating = isRotating;
     }
     
     createTCSMaterial() {
@@ -336,12 +345,14 @@ export class EnhancedTCMVisualization {
      * Reset the visualization to the default core view
      * - Main color only (with vertical gradient: black -> main color -> white)
      * - No lining, no tonal effects, no circular gradient
+     * - No rotation
      */
     resetToDefaultView() {
         // Reset state flags
         this.showGradient = false;
         this.useGrayLining = false;
         this.showCircularGradient = false;
+        this.isRotating = false;
         
         // Restore the core TCS material (vertical gradient)
         if (this.cylinder) {
