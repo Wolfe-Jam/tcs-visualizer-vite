@@ -202,17 +202,8 @@
                 <!-- Gradient bar -->
                 <div id="gradientBar" style="height: 30px; border-radius: 4px; margin-bottom: 15px; cursor: pointer; background-image: linear-gradient(to right, #FF5733, #00A8CC);"></div>
                 
-                <!-- Color picker container -->
-                <div id="colorPickerContainer" style="position: relative; margin-bottom: 15px;">
-                    <!-- Custom color picker button -->
-                    <button id="colorPickerButton" style="width: 100%; padding: 8px; background-color: var(--button-bg); color: var(--button-text); border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                        <span style="margin-right: 5px;">Choose Color</span>
-                        <div style="width: 20px; height: 20px; background-color: #FF5733; border-radius: 3px; border: 1px solid rgba(0,0,0,0.2);"></div>
-                    </button>
-                    
-                    <!-- Hidden native color picker for actual color selection -->
-                    <input type="color" id="colorPicker" value="#FF5733" style="position: absolute; opacity: 0; width: 0; height: 0;">
-                </div>
+                <!-- Hidden color picker for actual color selection -->
+                <input type="color" id="colorPicker" value="#FF5733" style="position: absolute; opacity: 0; width: 0; height: 0;">
                 
                 <div class="toggle-container">
                     <label class="toggle-switch">
