@@ -16,7 +16,7 @@ export class EnhancedTCMVisualization {
         this.isRotating = false; // Default to no rotation
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
-        this.displayMode = 'semi-transparent'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
+        this.displayMode = 'solid'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
         this.grayLiningColor = new THREE.Color(0x666666); // Gray color for lining
@@ -35,6 +35,10 @@ export class EnhancedTCMVisualization {
         this.setupLighting();
         this.setupControls();
         this.createVisualization();
+        
+        // Set initial display mode to solid
+        this.setDisplayMode('solid');
+        
         this.animate();
         
         return this;
@@ -245,11 +249,11 @@ export class EnhancedTCMVisualization {
                         color = mix(mainColor, vec3(1.0, 1.0, 1.0), t);
                     }
                     
-                    gl_FragColor = vec4(color, 0.8); // 0.8 for slight transparency
+                    gl_FragColor = vec4(color, 1.0); // 1.0 for full opacity (solid)
                 }
             `,
-            side: THREE.DoubleSide,
-            transparent: true
+            side: THREE.FrontSide, // Only render front side to fix back seam issues
+            transparent: false // Solid by default
         });
     }
     
@@ -367,6 +371,7 @@ export class EnhancedTCMVisualization {
      * - Main color only (with vertical gradient: black -> main color -> white)
      * - No lining, no tonal effects, no circular gradient
      * - No rotation
+     * - Solid display mode
      */
     resetToDefaultView() {
         // Reset state flags
@@ -393,6 +398,9 @@ export class EnhancedTCMVisualization {
         if (this.innerCylinder) {
             this.innerCylinder.visible = false;
         }
+        
+        // Set display mode to solid
+        this.setDisplayMode('solid');
     }
     
     applyCircularGradient() {
