@@ -252,7 +252,7 @@ export class EnhancedTCMVisualization {
                     gl_FragColor = vec4(color, 1.0); // 1.0 for full opacity (solid)
                 }
             `,
-            side: THREE.FrontSide, // Only render front side to fix back seam issues
+            side: THREE.DoubleSide, // Render both sides to show back of cylinder
             transparent: false // Solid by default
         });
     }
@@ -725,6 +725,10 @@ export class EnhancedTCMVisualization {
             this.knitPattern.visible = false;
         }
         
+        // Ensure consistent rendering of both sides of cylinder across all modes
+        this.cylinder.material.side = THREE.DoubleSide;
+        this.innerCylinder.material.side = THREE.DoubleSide;
+        
         // Apply the selected display mode
         switch (mode) {
             case 'knit-pattern':
@@ -755,7 +759,7 @@ export class EnhancedTCMVisualization {
                 break;
                 
             case 'semi-transparent':
-                // Semi-transparent mode (default)
+                // Semi-transparent mode
                 this.cylinder.material.wireframe = false;
                 this.innerCylinder.material.wireframe = false;
                 this.cylinder.material.transparent = true;
@@ -773,6 +777,17 @@ export class EnhancedTCMVisualization {
                 this.cylinder.material.opacity = 1.0;
                 this.innerCylinder.material.opacity = 1.0;
                 break;
+        }
+        
+        // Apply TCS material with consistent rendering of both sides
+        if (mode === 'solid' || mode === 'semi-transparent') {
+            // Create a new TCS material with the current settings
+            const tcsMaterial = this.createTCSMaterial();
+            tcsMaterial.transparent = this.cylinder.material.transparent;
+            tcsMaterial.opacity = this.cylinder.material.opacity;
+            
+            // Apply the material to the cylinder
+            this.cylinder.material = tcsMaterial;
         }
         
         // Update colors to ensure they're applied with the new material settings
