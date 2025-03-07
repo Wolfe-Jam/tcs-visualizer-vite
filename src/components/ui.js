@@ -157,6 +157,20 @@ export function setupUI(visualization) {
     if (setCameraButton) {
         setCameraButton.addEventListener('click', () => {
             visualization.setCurrentCameraAsDefault();
+            
+            // Log camera position for reference
+            console.log('Camera Position:', {
+                position: {
+                    x: visualization.camera.position.x,
+                    y: visualization.camera.position.y,
+                    z: visualization.camera.position.z
+                },
+                target: {
+                    x: visualization.controls.target.x,
+                    y: visualization.controls.target.y,
+                    z: visualization.controls.target.z
+                }
+            });
         });
     }
     
