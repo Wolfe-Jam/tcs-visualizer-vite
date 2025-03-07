@@ -198,6 +198,14 @@ export function setupUI(visualization) {
         });
     }
     
+    // Circular gradient toggle
+    const circularGradientToggle = document.getElementById('circularGradientToggle');
+    if (circularGradientToggle) {
+        circularGradientToggle.addEventListener('change', (e) => {
+            visualization.toggleCircularGradient(e.target.checked);
+        });
+    }
+    
     // Grid toggle
     const gridToggle = document.getElementById('gridToggle');
     if (gridToggle) {

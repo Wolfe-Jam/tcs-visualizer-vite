@@ -20,6 +20,7 @@ export class EnhancedTCMVisualization {
         this.complementaryColor = new THREE.Color(0x33B5FF);
         this.grayLiningColor = new THREE.Color(0x666666); // Gray color for lining
         this.useGrayLining = false; // Default to complementary color lining
+        this.showCircularGradient = false; // Default to no circular gradient
         this.isDarkMode = false; // Default to light mode
         
         this.init();
@@ -243,6 +244,59 @@ export class EnhancedTCMVisualization {
             // Update the gradient/lining with the new setting
             this.updateGradient();
         }
+    }
+    
+    toggleCircularGradient(showCircularGradient) {
+        this.showCircularGradient = showCircularGradient;
+        
+        if (this.cylinder) {
+            if (showCircularGradient) {
+                // Apply circular gradient material
+                this.applyCircularGradient();
+            } else {
+                // Restore normal material
+                this.setColor(this.currentColor);
+            }
+        }
+    }
+    
+    applyCircularGradient() {
+        if (!this.cylinder) return;
+        
+        // Create a shader material for the circular gradient
+        const gradientMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                color1: { value: this.currentColor },
+                color2: { value: this.complementaryColor }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 color1;
+                uniform vec3 color2;
+                varying vec2 vUv;
+                
+                void main() {
+                    // Calculate angle around the cylinder (0 to 1)
+                    float angle = atan(vUv.x - 0.5, vUv.y - 0.5) / (2.0 * 3.14159) + 0.5;
+                    
+                    // Mix between the two colors based on the angle
+                    vec3 color = mix(color1, color2, angle);
+                    
+                    gl_FragColor = vec4(color, 0.8); // 0.8 for slight transparency
+                }
+            `,
+            side: THREE.DoubleSide,
+            transparent: true
+        });
+        
+        // Apply the gradient material to the cylinder
+        this.cylinder.material = gradientMaterial;
     }
     
     resetCamera() {
