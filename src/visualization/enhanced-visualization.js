@@ -198,6 +198,16 @@ export class EnhancedTCMVisualization {
      */
     toggleRotation(isRotating) {
         this.isRotating = isRotating;
+        
+        // When turning rotation on, reset to a consistent starting position
+        if (isRotating && this.cylinder && this.innerCylinder) {
+            // Reset to 0 degrees (front-facing position)
+            this.cylinder.rotation.y = 0;
+            this.innerCylinder.rotation.y = 0;
+            if (this.centerLine) {
+                this.centerLine.rotation.y = 0;
+            }
+        }
     }
     
     createTCSMaterial(color) {
@@ -365,12 +375,21 @@ export class EnhancedTCMVisualization {
         this.showCircularGradient = false;
         this.isRotating = false;
         
+        // Reset rotation position to 0 degrees (front-facing position)
+        if (this.cylinder && this.innerCylinder) {
+            this.cylinder.rotation.y = 0;
+            this.innerCylinder.rotation.y = 0;
+            if (this.centerLine) {
+                this.centerLine.rotation.y = 0;
+            }
+        }
+        
         // Restore the core TCS material (vertical gradient)
         if (this.cylinder) {
             this.cylinder.material = this.createTCSMaterial();
         }
         
-        // Make sure inner cylinder is not visible (no lining)
+        // Hide inner cylinder (no lining)
         if (this.innerCylinder) {
             this.innerCylinder.visible = false;
         }
