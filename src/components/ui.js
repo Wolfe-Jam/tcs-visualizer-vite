@@ -40,6 +40,15 @@ export function updateColorDisplay(hexColor, visualization) {
             gradientBar.style.backgroundImage = `linear-gradient(to right, ${hexColor}, ${complementaryColor})`;
         }
         
+        // Update color picker button indicator
+        const colorPickerButton = document.getElementById('colorPickerButton');
+        if (colorPickerButton) {
+            const colorIndicator = colorPickerButton.querySelector('div');
+            if (colorIndicator) {
+                colorIndicator.style.backgroundColor = hexColor;
+            }
+        }
+        
         // Update visualization if available
         if (visualization) {
             visualization.setColor(new THREE.Color(hexColor));
@@ -60,13 +69,19 @@ export function setupUI(visualization) {
         });
     }
     
-    // Add click events to color swatches and gradient bar to open color picker
+    // Add click events to color swatches, gradient bar, and color picker button
     const colorSwatch = document.getElementById('colorSwatch');
     const complementaryColorSwatch = document.getElementById('complementaryColorSwatch');
     const gradientBar = document.getElementById('gradientBar');
+    const colorPickerButton = document.getElementById('colorPickerButton');
     
     // Function to open color picker
-    const openColorPicker = () => {
+    const openColorPicker = (e) => {
+        // Prevent event bubbling
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Position the color picker within the container
         colorPicker.click();
     };
     
@@ -74,6 +89,7 @@ export function setupUI(visualization) {
     if (colorSwatch) colorSwatch.addEventListener('click', openColorPicker);
     if (complementaryColorSwatch) complementaryColorSwatch.addEventListener('click', openColorPicker);
     if (gradientBar) gradientBar.addEventListener('click', openColorPicker);
+    if (colorPickerButton) colorPickerButton.addEventListener('click', openColorPicker);
     
     // Rotation speed slider
     const rotationSpeedSlider = document.getElementById('rotationSpeed');
