@@ -206,6 +206,28 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
+        
+        /* Round reset button styling */
+        .reset-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--selector-bg);
+            color: var(--text-color);
+            border: 2px solid var(--selector-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+        
+        .reset-button:hover {
+            background-color: var(--selector-active-bg);
+            color: var(--selector-active-text);
+            transform: rotate(30deg);
+        }
     </style>
   </head>
   <body>
@@ -218,8 +240,8 @@
             <div class="control-group">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 style="margin: 0;">Color Selection</h2>
-                    <button id="resetButton" style="background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-color);" title="Reset to default view">
-                        <i class="fas fa-undo-alt"></i> Reset
+                    <button id="resetButton" class="reset-button" title="Reset to default view">
+                        <i class="fas fa-undo-alt"></i>
                     </button>
                 </div>
                 
