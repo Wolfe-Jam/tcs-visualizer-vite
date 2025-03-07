@@ -106,12 +106,11 @@ export function setupUI(visualization) {
                     
                     // Update the UI - highlight the selected option
                     document.querySelectorAll('.display-mode-selector label').forEach(label => {
-                        label.style.backgroundColor = '';
-                        label.style.color = '';
+                        label.classList.remove('active');
                     });
                     
-                    e.target.parentElement.style.backgroundColor = '#3498db';
-                    e.target.parentElement.style.color = 'white';
+                    // Add active class to the selected option
+                    e.target.parentElement.classList.add('active');
                 }
             });
         });

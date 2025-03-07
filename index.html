@@ -14,6 +14,14 @@
             --heading-color: #2c3e50;
             --shadow-color: rgba(0, 0, 0, 0.1);
             --visualization-bg: #f0f0f0;
+            --button-bg: #3498db;
+            --button-text: white;
+            --button-hover: #2980b9;
+            --selector-bg: #e0e0e0;
+            --selector-border: #ccc;
+            --selector-active-bg: #3498db;
+            --selector-active-text: white;
+            --selector-text: #333;
         }
         
         [data-theme="dark"] {
@@ -24,6 +32,14 @@
             --heading-color: #90caf9;
             --shadow-color: rgba(0, 0, 0, 0.3);
             --visualization-bg: #2a2a2a;
+            --button-bg: #2980b9;
+            --button-text: white;
+            --button-hover: #3498db;
+            --selector-bg: #2a2a2a;
+            --selector-border: #444;
+            --selector-active-bg: #2980b9;
+            --selector-active-text: white;
+            --selector-text: #e0e0e0;
         }
         
         body {
@@ -217,16 +233,16 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label>Display Mode</label>
-                    <div class="display-mode-selector" style="display: flex; margin-top: 8px; background-color: #e0e0e0; border-radius: 4px; overflow: hidden;">
-                        <label style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid #ccc;" for="knitPatternMode">
+                    <div class="display-mode-selector" style="display: flex; margin-top: 8px; background-color: var(--selector-bg); border-radius: 4px; overflow: hidden;">
+                        <label class="mode-option" style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); color: var(--selector-text);" for="knitPatternMode">
                             <input type="radio" id="knitPatternMode" name="displayMode" value="knit-pattern" style="display: none;">
                             Construction
                         </label>
-                        <label style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid #ccc; background-color: #3498db; color: white;" for="transparentMode">
+                        <label class="mode-option active" style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); background-color: var(--selector-active-bg); color: var(--selector-active-text);" for="transparentMode">
                             <input type="radio" id="transparentMode" name="displayMode" value="semi-transparent" checked style="display: none;">
                             Transparent
                         </label>
-                        <label style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em;" for="solidMode">
+                        <label class="mode-option" style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; color: var(--selector-text);" for="solidMode">
                             <input type="radio" id="solidMode" name="displayMode" value="solid" style="display: none;">
                             Solid
                         </label>
@@ -234,9 +250,25 @@
                 </div>
                 
                 <div style="display: flex; gap: 10px;">
-                    <button id="resetCamera">Reset Camera</button>
-                    <button id="setCamera" style="background-color: #27ae60;">Set Camera</button>
+                    <button id="resetCamera" style="background-color: var(--button-bg); color: var(--button-text); border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">Reset Camera</button>
+                    <button id="setCamera" style="background-color: #27ae60; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">Set Camera</button>
                 </div>
+                
+                <style>
+                    button:hover {
+                        background-color: var(--button-hover) !important;
+                    }
+                    
+                    .mode-option:hover {
+                        background-color: var(--button-hover);
+                        color: var(--button-text);
+                    }
+                    
+                    .mode-option.active {
+                        background-color: var(--selector-active-bg);
+                        color: var(--selector-active-text);
+                    }
+                </style>
             </div>
         </div>
     </div>
