@@ -430,18 +430,31 @@ export class EnhancedTCMVisualization {
             }
         }
         
-        // Restore the core TCS material (vertical gradient)
-        if (this.cylinder) {
-            this.cylinder.material = this.createTCSMaterial();
-        }
-        
-        // Hide inner cylinder (no lining)
-        if (this.innerCylinder) {
-            this.innerCylinder.visible = false;
-        }
-        
-        // Set display mode to solid
+        // Set display mode to Solid
         this.setDisplayMode('solid');
+        
+        // Update the UI radio buttons to reflect Solid mode
+        const solidRadio = document.getElementById('solidMode');
+        if (solidRadio) {
+            solidRadio.checked = true;
+            
+            // Update the display mode buttons styling
+            document.querySelectorAll('.display-mode-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.backgroundColor = 'var(--selector-bg)';
+                btn.style.color = 'var(--selector-text)';
+                btn.style.fontWeight = 'normal';
+            });
+            
+            // Highlight the solid mode button
+            const solidBtn = document.querySelector(`label[for="${solidRadio.id}"]`);
+            if (solidBtn) {
+                solidBtn.classList.add('selected');
+                solidBtn.style.backgroundColor = 'var(--selector-active-bg)';
+                solidBtn.style.color = 'var(--selector-active-text)';
+                solidBtn.style.fontWeight = 'bold';
+            }
+        }
     }
     
     applyCircularGradient() {
