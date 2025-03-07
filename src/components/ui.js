@@ -245,6 +245,14 @@ export function setupUI(visualization) {
         });
     }
     
+    // Show Mesh toggle
+    const showMeshToggle = document.getElementById('showMeshToggle');
+    if (showMeshToggle) {
+        showMeshToggle.addEventListener('change', (e) => {
+            visualization.toggleMesh(e.target.checked);
+        });
+    }
+    
     // Display mode radio buttons
     const displayModeRadios = document.querySelectorAll('input[name="displayMode"]');
     if (displayModeRadios.length > 0) {

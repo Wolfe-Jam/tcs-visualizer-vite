@@ -16,6 +16,7 @@ export class EnhancedTCMVisualization {
         this.isRotating = false; // Default to no rotation
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
+        this.showMesh = false; // Default to not showing mesh in all modes
         this.displayMode = 'solid'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
         this.invertMeshColor = false; // Property for wireframe mesh color inversion
         this.currentColor = new THREE.Color(0xFF5733);
@@ -215,7 +216,7 @@ export class EnhancedTCMVisualization {
         }
     }
     
-    createTCSMaterial(color) {
+    createTCSMaterial(color, isTransparent = false, opacity = 1.0) {
         // Create a shader material for the core TCS vertical gradient
         // If no color is provided, use the current color
         const materialColor = color || this.currentColor;
@@ -255,8 +256,8 @@ export class EnhancedTCMVisualization {
                 }
             `,
             side: THREE.DoubleSide, // Render both sides to show back of cylinder
-            transparent: false, // Will be set based on display mode
-            opacity: 1.0 // Will be set based on display mode
+            transparent: isTransparent,
+            opacity: opacity
         });
     }
     
@@ -655,9 +656,22 @@ export class EnhancedTCMVisualization {
     toggleMeshColorInversion(invert) {
         this.invertMeshColor = invert;
         
-        // Update the wireframe mesh color if in knit-pattern mode
-        if (this.displayMode === 'knit-pattern' && this.knitPattern) {
+        // Update the wireframe mesh color if it's visible
+        if (this.knitPattern) {
             this.updateKnitPatternColor();
+        }
+    }
+    
+    toggleMesh(show) {
+        this.showMesh = show;
+        
+        // Show/hide the knit pattern based on the toggle
+        if (this.knitPattern) {
+            // Only update visibility if we're not in construction mode
+            // In construction mode, the visibility is controlled by setDisplayMode
+            if (this.displayMode !== 'knit-pattern') {
+                this.knitPattern.visible = show;
+            }
         }
     }
     
@@ -780,30 +794,16 @@ export class EnhancedTCMVisualization {
         // Apply the selected display mode
         switch (mode) {
             case 'knit-pattern':
-                // Knit pattern mode - show diagonal knit texture
+                // Construction mode - show wireframe
+                
+                // Always show the knit pattern in construction mode
                 if (this.knitPattern) {
                     this.knitPattern.visible = true;
-                    
-                    // Update knit pattern color to match current color
-                    if (this.knitPattern.material) {
-                        this.knitPattern.material.color = this.currentColor;
-                    }
-                    
-                    // Make children lines match color too
-                    this.knitPattern.children.forEach(child => {
-                        if (child.material) {
-                            child.material.color = this.currentColor;
-                        }
-                    });
                 }
                 
-                // Make the cylinder semi-transparent to show the knit pattern
-                this.cylinder.material.transparent = true;
-                this.innerCylinder.material.transparent = true;
-                this.cylinder.material.opacity = 0.3;
-                this.innerCylinder.material.opacity = 0.2;
-                this.cylinder.material.wireframe = false;
-                this.innerCylinder.material.wireframe = false;
+                // Make the cylinder wireframe to show proper construction view
+                this.cylinder.material.wireframe = true;
+                this.innerCylinder.material.wireframe = true;
                 
                 // Update knit pattern color based on inversion setting
                 this.updateKnitPatternColor();
@@ -813,73 +813,75 @@ export class EnhancedTCMVisualization {
                 // Semi-transparent mode
                 this.cylinder.material.wireframe = false;
                 this.innerCylinder.material.wireframe = false;
-                this.cylinder.material.transparent = true;
-                this.innerCylinder.material.transparent = true;
-                this.cylinder.material.opacity = 0.4; // More transparent
-                this.innerCylinder.material.opacity = 0.2; // More transparent
+                
+                // Show/hide the knit pattern based on showMesh setting
+                if (this.knitPattern) {
+                    this.knitPattern.visible = this.showMesh;
+                }
                 break;
                 
             case 'solid':
                 // Solid mode
                 this.cylinder.material.wireframe = false;
                 this.innerCylinder.material.wireframe = false;
-                this.cylinder.material.transparent = false;
-                this.innerCylinder.material.transparent = false;
-                this.cylinder.material.opacity = 1.0;
-                this.innerCylinder.material.opacity = 1.0;
+                
+                // Show/hide the knit pattern based on showMesh setting
+                if (this.knitPattern) {
+                    this.knitPattern.visible = this.showMesh;
+                }
                 break;
         }
         
         // Apply appropriate materials based on display mode
         if (mode === 'solid') {
-            // Create a solid material
-            const solidMaterial = new THREE.MeshPhongMaterial({
-                color: this.currentColor,
-                transparent: false,
-                opacity: 1.0,
-                side: THREE.DoubleSide,
-                shininess: 30
-            });
+            // Create a solid material with gradient
+            const solidMaterial = this.createTCSMaterial(this.currentColor, false, 1.0);
             
             // Apply the material to the cylinder
             this.cylinder.material = solidMaterial;
             
             // Create a solid material for inner cylinder
-            const innerSolidMaterial = new THREE.MeshPhongMaterial({
-                color: this.useGrayLining ? this.grayLiningColor : this.complementaryColor,
-                transparent: false,
-                opacity: 1.0,
-                side: THREE.DoubleSide,
-                shininess: 30
-            });
+            const innerColor = this.useGrayLining ? this.grayLiningColor : this.complementaryColor;
+            const innerSolidMaterial = this.createTCSMaterial(innerColor, false, 1.0);
             
             // Apply the material to the inner cylinder
             this.innerCylinder.material = innerSolidMaterial;
             
         } else if (mode === 'semi-transparent') {
-            // Create a transparent material
-            const transparentMaterial = new THREE.MeshPhongMaterial({
-                color: this.currentColor,
-                transparent: true,
-                opacity: 0.4,
-                side: THREE.DoubleSide,
-                shininess: 30
-            });
+            // Create a transparent material with gradient
+            const transparentMaterial = this.createTCSMaterial(this.currentColor, true, 0.4);
             
             // Apply the material to the cylinder
             this.cylinder.material = transparentMaterial;
             
             // Create a transparent material for inner cylinder
-            const innerTransparentMaterial = new THREE.MeshPhongMaterial({
-                color: this.useGrayLining ? this.grayLiningColor : this.complementaryColor,
-                transparent: true,
-                opacity: 0.2,
-                side: THREE.DoubleSide,
-                shininess: 30
-            });
+            const innerColor = this.useGrayLining ? this.grayLiningColor : this.complementaryColor;
+            const innerTransparentMaterial = this.createTCSMaterial(innerColor, true, 0.2);
             
             // Apply the material to the inner cylinder
             this.innerCylinder.material = innerTransparentMaterial;
+            
+        } else if (mode === 'knit-pattern') {
+            // Construction mode - create a wireframe material
+            const wireframeMaterial = new THREE.MeshBasicMaterial({
+                color: this.currentColor,
+                wireframe: true,
+                side: THREE.DoubleSide
+            });
+            
+            // Apply the material to the cylinder
+            this.cylinder.material = wireframeMaterial;
+            
+            // Create a wireframe material for inner cylinder
+            const innerColor = this.useGrayLining ? this.grayLiningColor : this.complementaryColor;
+            const innerWireframeMaterial = new THREE.MeshBasicMaterial({
+                color: innerColor,
+                wireframe: true,
+                side: THREE.DoubleSide
+            });
+            
+            // Apply the material to the inner cylinder
+            this.innerCylinder.material = innerWireframeMaterial;
         }
         
         // Update colors to ensure they're applied with the new material settings
