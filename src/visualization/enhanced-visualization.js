@@ -430,6 +430,9 @@ export class EnhancedTCMVisualization {
             }
         }
         
+        // Reset camera to default position
+        this.resetCamera();
+        
         // Set display mode to Solid
         this.setDisplayMode('solid');
         
