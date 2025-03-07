@@ -70,6 +70,14 @@ export function setupUI(visualization) {
         });
     }
     
+    // Set camera button
+    const setCameraButton = document.getElementById('setCamera');
+    if (setCameraButton) {
+        setCameraButton.addEventListener('click', () => {
+            visualization.setCurrentCameraAsDefault();
+        });
+    }
+    
     // Gradient toggle
     const gradientToggle = document.getElementById('gradientToggle');
     if (gradientToggle) {

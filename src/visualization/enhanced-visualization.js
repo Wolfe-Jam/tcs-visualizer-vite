@@ -241,6 +241,47 @@ export class EnhancedTCMVisualization {
         }
     }
     
+    setCurrentCameraAsDefault() {
+        // Save the current camera position and target as the new default
+        if (this.camera && this.controls) {
+            // Store current position and controls target
+            this.defaultCameraPosition = {
+                position: this.camera.position.clone(),
+                lookAt: this.controls.target.clone()
+            };
+            
+            // Provide visual feedback
+            const notification = document.createElement('div');
+            notification.textContent = 'Camera position saved!';
+            notification.style.position = 'absolute';
+            notification.style.top = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = 'rgba(0, 150, 0, 0.8)';
+            notification.style.color = 'white';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '4px';
+            notification.style.zIndex = '1000';
+            notification.style.transition = 'opacity 0.5s';
+            
+            const container = document.getElementById('visualization');
+            if (container) {
+                container.appendChild(notification);
+                
+                // Fade out and remove after 2 seconds
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        container.removeChild(notification);
+                    }, 500);
+                }, 2000);
+            }
+            
+            return true;
+        }
+        return false;
+    }
+    
     updateGradient() {
         // Implementation would depend on how you want to visualize the gradient
         // This is a simplified version
