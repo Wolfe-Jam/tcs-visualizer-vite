@@ -223,7 +223,8 @@ export class EnhancedTCMVisualization {
         
         return new THREE.ShaderMaterial({
             uniforms: {
-                mainColor: { value: materialColor }
+                mainColor: { value: materialColor },
+                opacity: { value: opacity }
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -234,6 +235,7 @@ export class EnhancedTCMVisualization {
             `,
             fragmentShader: `
                 uniform vec3 mainColor;
+                uniform float opacity;
                 varying vec2 vUv;
                 
                 void main() {
@@ -251,8 +253,8 @@ export class EnhancedTCMVisualization {
                         color = mix(mainColor, vec3(1.0, 1.0, 1.0), t);
                     }
                     
-                    // Allow alpha to be controlled by material.opacity
-                    gl_FragColor = vec4(color, 1.0); // Alpha will be modified by material.opacity
+                    // Use the opacity uniform for transparency
+                    gl_FragColor = vec4(color, opacity);
                 }
             `,
             side: THREE.DoubleSide, // Render both sides to show back of cylinder
@@ -849,14 +851,14 @@ export class EnhancedTCMVisualization {
             
         } else if (mode === 'semi-transparent') {
             // Create a transparent material with gradient
-            const transparentMaterial = this.createTCSMaterial(this.currentColor, true, 0.4);
+            const transparentMaterial = this.createTCSMaterial(this.currentColor, true, 0.3);
             
             // Apply the material to the cylinder
             this.cylinder.material = transparentMaterial;
             
             // Create a transparent material for inner cylinder
             const innerColor = this.useGrayLining ? this.grayLiningColor : this.complementaryColor;
-            const innerTransparentMaterial = this.createTCSMaterial(innerColor, true, 0.2);
+            const innerTransparentMaterial = this.createTCSMaterial(innerColor, true, 0.15);
             
             // Apply the material to the inner cylinder
             this.innerCylinder.material = innerTransparentMaterial;
