@@ -32,6 +32,13 @@ export function updateColorDisplay(hexColor, visualization) {
         document.getElementById('colorHex').textContent = hexColor;
         document.getElementById('colorSwatch').style.backgroundColor = hexColor;
         document.getElementById('complementaryColorSwatch').style.backgroundColor = complementaryColor;
+        document.getElementById('complementaryColorHex').textContent = complementaryColor;
+        
+        // Update gradient bar
+        const gradientBar = document.getElementById('gradientBar');
+        if (gradientBar) {
+            gradientBar.style.backgroundImage = `linear-gradient(to right, ${hexColor}, ${complementaryColor})`;
+        }
         
         // Update visualization if available
         if (visualization) {
@@ -52,6 +59,21 @@ export function setupUI(visualization) {
             updateColorDisplay(e.target.value, visualization);
         });
     }
+    
+    // Add click events to color swatches and gradient bar to open color picker
+    const colorSwatch = document.getElementById('colorSwatch');
+    const complementaryColorSwatch = document.getElementById('complementaryColorSwatch');
+    const gradientBar = document.getElementById('gradientBar');
+    
+    // Function to open color picker
+    const openColorPicker = () => {
+        colorPicker.click();
+    };
+    
+    // Add click event listeners
+    if (colorSwatch) colorSwatch.addEventListener('click', openColorPicker);
+    if (complementaryColorSwatch) complementaryColorSwatch.addEventListener('click', openColorPicker);
+    if (gradientBar) gradientBar.addEventListener('click', openColorPicker);
     
     // Rotation speed slider
     const rotationSpeedSlider = document.getElementById('rotationSpeed');

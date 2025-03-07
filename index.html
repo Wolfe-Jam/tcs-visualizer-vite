@@ -181,14 +181,29 @@
         <div class="controls">
             <div class="control-group">
                 <h2>Color Selection</h2>
-                <div class="color-display">
-                    <div id="colorSwatch" class="color-swatch"></div>
-                    <div class="color-info">
-                        <h3>Current Color</h3>
-                        <p>Hex: <span id="colorHex">#FF5733</span></p>
+                
+                <!-- Color swatches in a row -->
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <!-- Main color -->
+                    <div style="text-align: center; width: 48%;">
+                        <p style="margin-bottom: 5px; font-weight: bold;">Main</p>
+                        <div id="colorSwatch" class="color-swatch" style="width: 100%; height: 60px; margin: 0 auto 10px auto; cursor: pointer;"></div>
+                        <p style="margin: 0;">Hex: <span id="colorHex">#FF5733</span></p>
+                    </div>
+                    
+                    <!-- Complementary color -->
+                    <div style="text-align: center; width: 48%;">
+                        <p style="margin-bottom: 5px; font-weight: bold;">Complementary</p>
+                        <div id="complementaryColorSwatch" class="color-swatch" style="width: 100%; height: 60px; margin: 0 auto 10px auto; cursor: pointer;"></div>
+                        <p style="margin: 0;">Hex: <span id="complementaryColorHex">#00A8CC</span></p>
                     </div>
                 </div>
-                <input type="color" id="colorPicker" value="#FF5733" style="margin-bottom: 15px;">
+                
+                <!-- Gradient bar -->
+                <div id="gradientBar" style="height: 30px; border-radius: 4px; margin-bottom: 15px; cursor: pointer; background-image: linear-gradient(to right, #FF5733, #00A8CC);"></div>
+                
+                <!-- Hidden color picker -->
+                <input type="color" id="colorPicker" value="#FF5733" style="display: none;">
                 
                 <div class="toggle-container">
                     <label class="toggle-switch">
@@ -196,14 +211,6 @@
                         <span class="slider"></span>
                     </label>
                     <span>Show Gradient</span>
-                </div>
-                
-                <div class="color-display" style="margin-top: 15px;">
-                    <div id="complementaryColorSwatch" class="color-swatch"></div>
-                    <div class="color-info">
-                        <h3>Complementary</h3>
-                        <p>Creates visual balance</p>
-                    </div>
                 </div>
             </div>
             
