@@ -233,7 +233,26 @@
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label for="rotationSpeed">Rotation Speed</label>
-                    <input type="range" id="rotationSpeed" min="0" max="0.05" step="0.001" value="0.005">
+                    <input type="range" id="rotationSpeed" min="0" max="0.05" step="0.001" value="0.005" style="width: 100%; -webkit-appearance: none; height: 8px; border-radius: 4px; background: var(--selector-bg); outline: none;">
+                    <style>
+                        input[type=range]::-webkit-slider-thumb {
+                            -webkit-appearance: none;
+                            appearance: none;
+                            width: 18px;
+                            height: 18px;
+                            border-radius: 50%;
+                            background: var(--selector-active-bg);
+                            cursor: pointer;
+                        }
+                        input[type=range]::-moz-range-thumb {
+                            width: 18px;
+                            height: 18px;
+                            border-radius: 50%;
+                            background: var(--selector-active-bg);
+                            cursor: pointer;
+                            border: none;
+                        }
+                    </style>
                 </div>
                 
                 <div class="toggle-container" style="margin-bottom: 15px;">
@@ -247,19 +266,27 @@
                 <div style="margin-bottom: 15px;">
                     <label>Display Mode</label>
                     <div class="display-mode-selector" style="display: flex; margin-top: 8px; background-color: var(--selector-bg); border-radius: 4px; overflow: hidden;">
-                        <label class="mode-option" style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); color: var(--selector-text);" for="knitPatternMode">
+                        <label class="mode-option" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); color: var(--selector-text); transition: all 0.2s ease;" for="knitPatternMode">
                             <input type="radio" id="knitPatternMode" name="displayMode" value="knit-pattern" style="display: none;">
                             Construction
                         </label>
-                        <label class="mode-option active" style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); background-color: var(--selector-active-bg); color: var(--selector-active-text);" for="transparentMode">
+                        <label class="mode-option active" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; border-right: 1px solid var(--selector-border); background-color: var(--selector-active-bg); color: var(--selector-active-text); font-weight: bold; transition: all 0.2s ease;" for="transparentMode">
                             <input type="radio" id="transparentMode" name="displayMode" value="semi-transparent" checked style="display: none;">
                             Transparent
                         </label>
-                        <label class="mode-option" style="flex: 1; text-align: center; padding: 8px 0; cursor: pointer; font-size: 0.9em; color: var(--selector-text);" for="solidMode">
+                        <label class="mode-option" style="flex: 1; text-align: center; padding: 10px 0; cursor: pointer; font-size: 0.9em; color: var(--selector-text); transition: all 0.2s ease;" for="solidMode">
                             <input type="radio" id="solidMode" name="displayMode" value="solid" style="display: none;">
                             Solid
                         </label>
                     </div>
+                    <style>
+                        .mode-option:not(.active) {
+                            opacity: 0.7;
+                        }
+                        .mode-option.active {
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        }
+                    </style>
                 </div>
                 
                 <div style="display: flex; gap: 10px;">
@@ -272,7 +299,7 @@
                         background-color: var(--button-hover) !important;
                     }
                     
-                    .mode-option:hover {
+                    .mode-option:hover:not(.active) {
                         background-color: var(--button-hover);
                         color: var(--button-text);
                     }
