@@ -40,7 +40,7 @@ export function initVersionDisplay() {
     footer.style.opacity = '0.7';
     footer.style.marginTop = '20px';
     
-    footer.innerHTML = `TCS Visualizer v${getVersion()} | Build: ${getBuildDate()}`;
+    footer.innerHTML = `TCS Visualizer v${getVersion()} | Build: ${getBuildDate()}<br>&copy; 2025 HEXTRA.io All rights reserved`;
     
     // Add the footer to the container
     const container = document.querySelector('.container');
