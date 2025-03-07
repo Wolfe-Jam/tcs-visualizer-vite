@@ -237,11 +237,11 @@ export function setupUI(visualization) {
         });
     }
     
-    // Invert Grid Color toggle
+    // Invert Mesh Color toggle
     const invertGridColorToggle = document.getElementById('invertGridColorToggle');
     if (invertGridColorToggle) {
         invertGridColorToggle.addEventListener('change', (e) => {
-            visualization.toggleGridColorInversion(e.target.checked);
+            visualization.toggleMeshColorInversion(e.target.checked);
         });
     }
     

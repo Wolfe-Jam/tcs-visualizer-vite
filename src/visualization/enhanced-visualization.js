@@ -17,7 +17,7 @@ export class EnhancedTCMVisualization {
         this.showGradient = false;
         this.showGrid = true; // Default to showing grid
         this.displayMode = 'solid'; // Options: 'knit-pattern', 'semi-transparent', 'solid'
-        this.invertGridColor = false; // New property for grid color inversion
+        this.invertMeshColor = false; // Property for wireframe mesh color inversion
         this.currentColor = new THREE.Color(0xFF5733);
         this.complementaryColor = new THREE.Color(0x33B5FF);
         this.grayLiningColor = new THREE.Color(0x666666); // Gray color for lining
@@ -257,6 +257,40 @@ export class EnhancedTCMVisualization {
             side: THREE.DoubleSide, // Render both sides to show back of cylinder
             transparent: false, // Will be set based on display mode
             opacity: 1.0 // Will be set based on display mode
+        });
+    }
+    
+    updateKnitPatternColor() {
+        if (!this.knitPattern) return;
+        
+        // Determine the color to use based on inversion setting
+        let meshColor;
+        if (this.invertMeshColor) {
+            // Create a complementary color
+            const tempColor = new THREE.Color().copy(this.currentColor);
+            const hsl = {};
+            tempColor.getHSL(hsl);
+            
+            // Invert hue (add 0.5 to get complementary color in HSL space)
+            hsl.h = (hsl.h + 0.5) % 1.0;
+            
+            // Set the new HSL value
+            tempColor.setHSL(hsl.h, hsl.s, hsl.l);
+            meshColor = tempColor;
+        } else {
+            meshColor = this.currentColor;
+        }
+        
+        // Update the knit pattern color
+        if (this.knitPattern.material) {
+            this.knitPattern.material.color = meshColor;
+        }
+        
+        // Update children lines colors too
+        this.knitPattern.children.forEach(child => {
+            if (child.material) {
+                child.material.color = meshColor;
+            }
         });
     }
     
@@ -618,9 +652,13 @@ export class EnhancedTCMVisualization {
         }
     }
     
-    toggleGridColorInversion(invert) {
-        this.invertGridColor = invert;
-        this.updateGridColors();
+    toggleMeshColorInversion(invert) {
+        this.invertMeshColor = invert;
+        
+        // Update the wireframe mesh color if in knit-pattern mode
+        if (this.displayMode === 'knit-pattern' && this.knitPattern) {
+            this.updateKnitPatternColor();
+        }
     }
     
     createKnitPattern() {
@@ -707,31 +745,6 @@ export class EnhancedTCMVisualization {
             let gridColor = this.isDarkMode ? 0x555555 : 0x888888;
             let gridCenterColor = this.isDarkMode ? 0x666666 : 0x444444;
             
-            // If invert color is enabled, use complementary colors
-            if (this.invertGridColor) {
-                // Convert to THREE.Color to use .getHSL and .setHSL methods
-                const tempColor = new THREE.Color(gridColor);
-                const tempCenterColor = new THREE.Color(gridCenterColor);
-                
-                // Get HSL values
-                const hsl = {};
-                const hslCenter = {};
-                tempColor.getHSL(hsl);
-                tempCenterColor.getHSL(hslCenter);
-                
-                // Invert hue (add 0.5 to get complementary color in HSL space)
-                hsl.h = (hsl.h + 0.5) % 1.0;
-                hslCenter.h = (hslCenter.h + 0.5) % 1.0;
-                
-                // Set the new HSL values
-                tempColor.setHSL(hsl.h, hsl.s, hsl.l);
-                tempCenterColor.setHSL(hslCenter.h, hslCenter.s, hslCenter.l);
-                
-                // Convert back to hex
-                gridColor = tempColor.getHex();
-                gridCenterColor = tempCenterColor.getHex();
-            }
-            
             // Update grid colors (need to recreate the grid as THREE.js doesn't allow changing colors directly)
             this.scene.remove(this.gridHelper);
             this.gridHelper = new THREE.GridHelper(10, 10, gridCenterColor, gridColor);
@@ -791,6 +804,9 @@ export class EnhancedTCMVisualization {
                 this.innerCylinder.material.opacity = 0.2;
                 this.cylinder.material.wireframe = false;
                 this.innerCylinder.material.wireframe = false;
+                
+                // Update knit pattern color based on inversion setting
+                this.updateKnitPatternColor();
                 break;
                 
             case 'semi-transparent':
@@ -816,25 +832,54 @@ export class EnhancedTCMVisualization {
         
         // Apply appropriate materials based on display mode
         if (mode === 'solid') {
-            // Create a new TCS material with solid settings
-            const tcsMaterial = this.createTCSMaterial();
-            tcsMaterial.transparent = false;
-            tcsMaterial.opacity = 1.0;
+            // Create a solid material
+            const solidMaterial = new THREE.MeshPhongMaterial({
+                color: this.currentColor,
+                transparent: false,
+                opacity: 1.0,
+                side: THREE.DoubleSide,
+                shininess: 30
+            });
             
             // Apply the material to the cylinder
-            this.cylinder.material = tcsMaterial;
+            this.cylinder.material = solidMaterial;
+            
+            // Create a solid material for inner cylinder
+            const innerSolidMaterial = new THREE.MeshPhongMaterial({
+                color: this.useGrayLining ? this.grayLiningColor : this.complementaryColor,
+                transparent: false,
+                opacity: 1.0,
+                side: THREE.DoubleSide,
+                shininess: 30
+            });
+            
+            // Apply the material to the inner cylinder
+            this.innerCylinder.material = innerSolidMaterial;
+            
         } else if (mode === 'semi-transparent') {
-            // For semi-transparent mode, create a material that's actually transparent
-            const tcsMaterial = this.createTCSMaterial();
-            tcsMaterial.transparent = true;
-            tcsMaterial.opacity = 0.4;
+            // Create a transparent material
+            const transparentMaterial = new THREE.MeshPhongMaterial({
+                color: this.currentColor,
+                transparent: true,
+                opacity: 0.4,
+                side: THREE.DoubleSide,
+                shininess: 30
+            });
             
             // Apply the material to the cylinder
-            this.cylinder.material = tcsMaterial;
+            this.cylinder.material = transparentMaterial;
             
-            // Make sure the inner cylinder is also transparent
-            this.innerCylinder.material.transparent = true;
-            this.innerCylinder.material.opacity = 0.2;
+            // Create a transparent material for inner cylinder
+            const innerTransparentMaterial = new THREE.MeshPhongMaterial({
+                color: this.useGrayLining ? this.grayLiningColor : this.complementaryColor,
+                transparent: true,
+                opacity: 0.2,
+                side: THREE.DoubleSide,
+                shininess: 30
+            });
+            
+            // Apply the material to the inner cylinder
+            this.innerCylinder.material = innerTransparentMaterial;
         }
         
         // Update colors to ensure they're applied with the new material settings
