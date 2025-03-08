@@ -1082,10 +1082,11 @@ export class EnhancedTCMVisualization {
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'quick-view-buttons';
         
-        // Position buttons in the top-right area over the visualization
+        // Position buttons centrally under the main visualization window
         buttonContainer.style.position = 'absolute';
-        buttonContainer.style.top = '15px';
-        buttonContainer.style.right = '15px';
+        buttonContainer.style.bottom = '10px';
+        buttonContainer.style.left = '50%';
+        buttonContainer.style.transform = 'translateX(-50%)';
         buttonContainer.style.display = 'flex';
         buttonContainer.style.flexDirection = 'row'; // Horizontal layout
         buttonContainer.style.flexWrap = 'nowrap';
