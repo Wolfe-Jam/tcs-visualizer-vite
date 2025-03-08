@@ -404,26 +404,33 @@ export function setupUI(visualization) {
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
         // Function to toggle the advanced settings panel
-        const toggleAdvancedSettings = (forceExpand = false) => {
+        const toggleAdvancedSettings = () => {
             const isCollapsed = advancedSettingsContent.style.display === 'none';
             
-            if (isCollapsed || forceExpand) {
+            if (isCollapsed) {
                 // Expand
                 advancedSettingsContent.style.display = 'block';
-                collapseAdvancedBtn.textContent = '▲';
+                collapseAdvancedBtn.textContent = '▲'; // Up arrow
             } else {
                 // Collapse
                 advancedSettingsContent.style.display = 'none';
-                collapseAdvancedBtn.textContent = '▼';
+                collapseAdvancedBtn.textContent = '▼'; // Down arrow
             }
         };
         
-        // Add click event to both the header and the collapse button
-        advancedSettingsHeader.addEventListener('click', () => toggleAdvancedSettings());
-        collapseAdvancedBtn.addEventListener('click', () => toggleAdvancedSettings());
+        // Initial collapse state (start collapsed)
+        advancedSettingsContent.style.display = 'none';
+        collapseAdvancedBtn.textContent = '▼';
         
-        // Initially expand the advanced settings to show controls
-        toggleAdvancedSettings(true);
+        // Add click event for the header (including the collapse button)
+        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+        
+        // Add separate click event for just the collapse button 
+        // to prevent event bubbling
+        collapseAdvancedBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleAdvancedSettings();
+        });
     }
     
     // Curved Stem toggle
@@ -439,14 +446,25 @@ export function setupUI(visualization) {
     
     // Stem Offset Slider
     const stemOffsetSlider = document.getElementById('stemOffsetSlider');
+    const offsetValueDisplay = document.getElementById('offsetValue');
     if (stemOffsetSlider) {
         // Set initial value from visualization
-        stemOffsetSlider.value = visualization.stemMaxOffset;
+        stemOffsetSlider.value = visualization.stemMaxOffset || 0.4;
+        
+        // Update the display value with initial value
+        if (offsetValueDisplay) {
+            offsetValueDisplay.textContent = parseFloat(stemOffsetSlider.value).toFixed(1);
+        }
         
         // Update when slider is moved
         stemOffsetSlider.addEventListener('input', (e) => {
             const offset = parseFloat(e.target.value);
             visualization.setStemOffset(offset);
+            
+            // Update the display value
+            if (offsetValueDisplay) {
+                offsetValueDisplay.textContent = offset.toFixed(1);
+            }
         });
     }
     
@@ -455,26 +473,41 @@ export function setupUI(visualization) {
     const segmentsValueDisplay = document.getElementById('segmentsValue');
     
     if (stemSegmentsSlider) {
-        // Set initial value (12 segments is the default)
-        const initialSegments = visualization.curvedStemSegments || 12;
-        stemSegmentsSlider.value = initialSegments;
+        // Set initial value to 1 (simplest representation)
+        stemSegmentsSlider.value = 1;
         
         if (segmentsValueDisplay) {
-            segmentsValueDisplay.textContent = initialSegments;
+            segmentsValueDisplay.textContent = 1;
+        }
+        
+        // Map the 1-4 slider value to actual segment count
+        const mapSegmentValue = (value) => {
+            switch (parseInt(value)) {
+                case 1: return 4;   // Simple
+                case 2: return 8;   // Moderate
+                case 3: return 16;  // Detailed
+                case 4: return 24;  // Very detailed
+                default: return 4;  // Default to simple
+            }
+        };
+        
+        // Set initial value in the visualization
+        if (visualization.setStemSegments) {
+            visualization.setStemSegments(mapSegmentValue(stemSegmentsSlider.value));
         }
         
         // Update when slider is moved
         stemSegmentsSlider.addEventListener('input', (e) => {
-            const segments = parseInt(e.target.value);
+            const sliderValue = parseInt(e.target.value);
             
             // Update the display value
             if (segmentsValueDisplay) {
-                segmentsValueDisplay.textContent = segments;
+                segmentsValueDisplay.textContent = sliderValue;
             }
             
-            // If the visualization has a method to update segments, call it
+            // Map the slider value to actual segment count and update
             if (visualization.setStemSegments) {
-                visualization.setStemSegments(segments);
+                visualization.setStemSegments(mapSegmentValue(sliderValue));
             }
         });
     }
