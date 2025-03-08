@@ -27,6 +27,8 @@ export class EnhancedTCMVisualization {
         this.showCircularGradient = false; // Default to no circular gradient
         this.isDarkMode = false; // Default to light mode
         this.originalCylinderMaterial = null; // Store original material
+        this.stemMaxOffset = 0.4; // Default maximum offset (20% of cylinder radius)
+        this.useCurvedStem = true; // Use curved stem by default
         
         this.init();
     }
@@ -170,7 +172,50 @@ export class EnhancedTCMVisualization {
             innerCylinder: this.innerCylinder.material.clone()
         };
         
-        // Create center line to represent material absorption
+        // Create center stem - either curved or straight based on settings
+        if (this.useCurvedStem) {
+            this.createCurvedStem();
+        } else {
+            this.createStraightStem();
+        }
+    }
+    
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        const time = performance.now() * 0.001; // Get time in seconds for animation
+        
+        // Auto-rotate the visualization only if rotation is enabled
+        if (this.isRotating && this.cylinder && this.innerCylinder && this.centerLine) {
+            this.cylinder.rotation.y += this.rotationSpeed;
+            this.innerCylinder.rotation.y += this.rotationSpeed;
+            this.centerLine.rotation.y += this.rotationSpeed;
+        }
+        
+        // Update stem animation if it's a curved stem with shader material
+        if (this.useCurvedStem && this.centerLine && this.centerLine.material && 
+            this.centerLine.material.uniforms && this.centerLine.material.uniforms.time) {
+            this.centerLine.material.uniforms.time.value = time;
+        }
+        
+        // Update controls
+        if (this.controls) {
+            this.controls.update();
+        }
+        
+        // Render the scene
+        this.renderer.render(this.scene, this.camera);
+    }
+    
+    /**
+     * Creates a straight center line to represent material absorption
+     */
+    createStraightStem() {
+        // Remove existing centerLine if it exists
+        if (this.centerLine) {
+            this.scene.remove(this.centerLine);
+        }
+        
         const centerLineGeometry = new THREE.CylinderGeometry(0.05, 0.05, 3, 8);
         const centerLineMaterial = new THREE.MeshStandardMaterial({
             color: this.currentColor,
@@ -181,22 +226,122 @@ export class EnhancedTCMVisualization {
         this.scene.add(this.centerLine);
     }
     
-    animate() {
-        requestAnimationFrame(() => this.animate());
-        
-        // Auto-rotate the visualization only if rotation is enabled
-        if (this.isRotating && this.cylinder && this.innerCylinder && this.centerLine) {
-            this.cylinder.rotation.y += this.rotationSpeed;
-            this.innerCylinder.rotation.y += this.rotationSpeed;
+    /**
+     * Creates a curved stem based on the original v0.5 implementation
+     * The stem represents material absorption with precise curvature and color gradient
+     */
+    createCurvedStem() {
+        // Remove existing centerLine if it exists
+        if (this.centerLine) {
+            this.scene.remove(this.centerLine);
         }
         
-        // Update controls
-        if (this.controls) {
-            this.controls.update();
-        }
+        // Define path points for curved stem
+        const pathPoints = [
+            { pos: new THREE.Vector3(0, -1.5, 0), color: new THREE.Color(0x000000) },  // Bottom (black)
+            { pos: new THREE.Vector3(this.stemMaxOffset * 0.5, -0.75, this.stemMaxOffset * 0.5), 
+              color: this.currentColor.clone().multiplyScalar(0.3) },  // Lower middle (30% color)
+            { pos: new THREE.Vector3(this.stemMaxOffset, 0, this.stemMaxOffset), 
+              color: this.currentColor.clone() },  // Middle (full color)
+            { pos: new THREE.Vector3(this.stemMaxOffset * 0.5, 0.75, this.stemMaxOffset * 0.5), 
+              color: this.currentColor.clone().lerp(new THREE.Color(0xffffff), 0.7) },  // Upper middle (70% to white)
+            { pos: new THREE.Vector3(0, 1.5, 0), color: new THREE.Color(0xffffff) }  // Top (white)
+        ];
         
-        // Render the scene
-        this.renderer.render(this.scene, this.camera);
+        // Create curve and tube geometry
+        const curve = new THREE.CatmullRomCurve3(pathPoints.map(p => p.pos));
+        const tubeGeometry = new THREE.TubeGeometry(curve, 50, 0.05, 8, false);
+        
+        // Create shader material for precise gradient control
+        const stemMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                colors: { value: pathPoints.map(p => p.color) },
+                time: { value: 0 }
+            },
+            vertexShader: `
+                varying float vPosition;
+                
+                void main() {
+                    vPosition = position.y;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 colors[5];
+                uniform float time;
+                varying float vPosition;
+                
+                void main() {
+                    float t = (vPosition + 1.5) / 3.0;
+                    vec3 color;
+                    
+                    if (t < 0.25) {
+                        color = mix(colors[0], colors[1], t * 4.0);
+                    } else if (t < 0.5) {
+                        color = mix(colors[1], colors[2], (t - 0.25) * 4.0);
+                    } else if (t < 0.75) {
+                        color = mix(colors[2], colors[3], (t - 0.5) * 4.0);
+                    } else {
+                        color = mix(colors[3], colors[4], (t - 0.75) * 4.0);
+                    }
+                    
+                    // Add subtle animation
+                    float pulse = sin(time * 2.0 + t * 10.0) * 0.1 + 0.9;
+                    color *= pulse;
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `
+        });
+        
+        // Create mesh and add to scene
+        this.centerLine = new THREE.Mesh(tubeGeometry, stemMaterial);
+        this.scene.add(this.centerLine);
+    }
+    
+    /**
+     * Updates the stem material with the new color
+     */
+    updateStemColor(color) {
+        if (!this.centerLine) return;
+        
+        if (this.useCurvedStem && this.centerLine.material.uniforms && this.centerLine.material.uniforms.colors) {
+            const colors = this.centerLine.material.uniforms.colors.value;
+            
+            // Update only color-related points (middle three)
+            colors[1] = color.clone().multiplyScalar(0.3);
+            colors[2] = color.clone();
+            colors[3] = color.clone().lerp(new THREE.Color(0xffffff), 0.7);
+            
+            this.centerLine.material.uniforms.colors.value = colors;
+        } else if (!this.useCurvedStem) {
+            // For straight stem, just update the color
+            this.centerLine.material.color = this.currentColor;
+            this.centerLine.material.emissive = this.currentColor;
+        }
+    }
+    
+    /**
+     * Sets the maximum offset for the curved stem
+     * @param {number} offset - The maximum offset value (0.0-1.0)
+     */
+    setStemOffset(offset) {
+        this.stemMaxOffset = offset;
+        if (this.useCurvedStem) {
+            this.createCurvedStem();
+        }
+    }
+    
+    /**
+     * Toggles between curved and straight stem
+     */
+    toggleCurvedStem(useCurved) {
+        this.useCurvedStem = useCurved;
+        if (useCurved) {
+            this.createCurvedStem();
+        } else {
+            this.createStraightStem();
+        }
     }
     
     /**
@@ -302,7 +447,7 @@ export class EnhancedTCMVisualization {
         this.currentColor = color;
         
         // Update materials
-        if (this.cylinder && this.innerCylinder && this.centerLine) {
+        if (this.cylinder && this.innerCylinder) {
             // For shader materials, update the uniform
             if (this.cylinder.material.type === 'ShaderMaterial') {
                 if (this.cylinder.material.uniforms.mainColor) {
@@ -319,8 +464,9 @@ export class EnhancedTCMVisualization {
             }
             
             this.innerCylinder.material.color = this.currentColor;
-            this.centerLine.material.color = this.currentColor;
-            this.centerLine.material.emissive = this.currentColor;
+            
+            // Update stem colors using dedicated method
+            this.updateStemColor(this.currentColor);
             
             // Update knit pattern color if it exists
             if (this.knitPattern) {

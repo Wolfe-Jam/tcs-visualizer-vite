@@ -397,6 +397,76 @@ export function setupUI(visualization) {
         });
     }
     
+    // Advanced Settings toggle
+    const advancedSettingsToggle = document.getElementById('advancedSettingsToggle');
+    const advancedSettingsContent = document.getElementById('advancedSettingsContent');
+    const advancedSettingsHeader = document.getElementById('advancedSettingsHeader');
+    const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
+    
+    if (advancedSettingsToggle && advancedSettingsContent) {
+        advancedSettingsToggle.addEventListener('change', (e) => {
+            advancedSettingsContent.style.display = e.target.checked ? 'block' : 'none';
+        });
+    }
+    
+    // Curved Stem toggle
+    const curvedStemToggle = document.getElementById('curvedStemToggle');
+    if (curvedStemToggle) {
+        // Set initial state based on visualization's property
+        curvedStemToggle.checked = visualization.useCurvedStem;
+        
+        curvedStemToggle.addEventListener('change', (e) => {
+            visualization.toggleCurvedStem(e.target.checked);
+        });
+    }
+    
+    // Stem Offset Slider
+    const stemOffsetSlider = document.getElementById('stemOffsetSlider');
+    if (stemOffsetSlider) {
+        // Set initial value from visualization
+        stemOffsetSlider.value = visualization.stemMaxOffset;
+        
+        // Update when slider is moved
+        stemOffsetSlider.addEventListener('input', (e) => {
+            const offset = parseFloat(e.target.value);
+            visualization.setStemOffset(offset);
+        });
+    }
+    
     // Initialize with default color
     updateColorDisplay('#FF5733', visualization);
+    
+    if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
+        // Function to toggle the advanced settings panel
+        const toggleAdvancedSettings = () => {
+            const isCollapsed = advancedSettingsContent.style.display === 'none';
+            
+            if (isCollapsed) {
+                // Expand
+                advancedSettingsContent.style.display = 'block';
+                collapseAdvancedBtn.textContent = '▼';
+                collapseAdvancedBtn.classList.remove('collapsed');
+            } else {
+                // Collapse
+                advancedSettingsContent.style.display = 'none';
+                collapseAdvancedBtn.textContent = '◀';
+                collapseAdvancedBtn.classList.add('collapsed');
+            }
+            
+            // Save preference
+            localStorage.setItem('advancedSettingsCollapsed', !isCollapsed);
+        };
+        
+        // Add click event to the header and button
+        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+        
+        // Check saved preference
+        const savedPreference = localStorage.getItem('advancedSettingsCollapsed');
+        if (savedPreference === 'true') {
+            // Initialize as collapsed
+            advancedSettingsContent.style.display = 'none';
+            collapseAdvancedBtn.textContent = '◀';
+            collapseAdvancedBtn.classList.add('collapsed');
+        }
+    }
 }
