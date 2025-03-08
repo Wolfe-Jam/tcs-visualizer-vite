@@ -1081,35 +1081,49 @@ export class EnhancedTCMVisualization {
         // Create a container for the quick view buttons
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'quick-view-buttons';
+        
+        // Position buttons directly over the canvas, inside the visualization container
         buttonContainer.style.position = 'absolute';
-        buttonContainer.style.bottom = '20px';
-        buttonContainer.style.right = '20px';
+        buttonContainer.style.bottom = '40px'; // More padding from bottom
+        buttonContainer.style.right = '40px'; // More padding from right
         buttonContainer.style.display = 'flex';
         buttonContainer.style.flexDirection = 'column';
-        buttonContainer.style.gap = '5px';
-        buttonContainer.style.zIndex = '100';
+        buttonContainer.style.gap = '8px';
+        // Ensure buttons are above the 3D canvas
+        buttonContainer.style.zIndex = '999';
+        // Make sure buttons don't exceed the container
+        buttonContainer.style.maxWidth = '40%';
+        buttonContainer.style.maxHeight = '70%';
+        buttonContainer.style.pointerEvents = 'auto';
         
         // Button style function
         const styleButton = (button) => {
-            button.style.backgroundColor = 'rgba(40, 40, 40, 0.7)';
+            button.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
             button.style.color = 'white';
-            button.style.border = 'none';
-            button.style.borderRadius = '4px';
-            button.style.padding = '8px 12px';
+            button.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+            button.style.borderRadius = '6px';
+            button.style.padding = '10px 15px';
+            button.style.margin = '3px';
             button.style.cursor = 'pointer';
-            button.style.fontSize = '12px';
+            button.style.fontSize = '13px';
             button.style.fontWeight = 'bold';
-            button.style.transition = 'all 0.3s ease';
-            button.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            button.style.transition = 'all 0.2s ease';
+            button.style.boxShadow = '0 3px 8px rgba(0,0,0,0.3)';
+            button.style.textAlign = 'center';
+            button.style.minWidth = '110px';
             
             button.addEventListener('mouseover', () => {
-                button.style.backgroundColor = 'rgba(60, 60, 60, 0.9)';
+                button.style.backgroundColor = 'rgba(60, 60, 60, 0.95)';
+                button.style.borderColor = 'rgba(255, 255, 255, 0.5)';
                 button.style.transform = 'translateY(-2px)';
+                button.style.boxShadow = '0 5px 10px rgba(0,0,0,0.4)';
             });
             
             button.addEventListener('mouseout', () => {
-                button.style.backgroundColor = 'rgba(40, 40, 40, 0.7)';
+                button.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
+                button.style.borderColor = 'rgba(255, 255, 255, 0.3)';
                 button.style.transform = 'translateY(0)';
+                button.style.boxShadow = '0 3px 8px rgba(0,0,0,0.3)';
             });
         };
         
