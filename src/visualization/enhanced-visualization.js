@@ -1075,28 +1075,27 @@ export class EnhancedTCMVisualization {
      * Places buttons in the bottom right of the visualization container
      */
     setupQuickViewButtons() {
-        const container = document.getElementById('visualization');
-        if (!container) return;
+        // Find the visualization container and controls container
+        const visualizationContainer = document.querySelector('.visualization-container');
+        const controlsContainer = document.querySelector('.controls');
+        if (!visualizationContainer || !controlsContainer) return;
         
         // Create a container for the quick view buttons
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'quick-view-buttons';
         
-        // Position buttons centrally under the main visualization window
-        buttonContainer.style.position = 'absolute';
-        buttonContainer.style.bottom = '10px';
-        buttonContainer.style.left = '50%';
-        buttonContainer.style.transform = 'translateX(-50%)';
+        // Style the button container to be centered between visualization and controls
         buttonContainer.style.display = 'flex';
-        buttonContainer.style.flexDirection = 'row'; // Horizontal layout
+        buttonContainer.style.justifyContent = 'center'; // Center buttons horizontally
+        buttonContainer.style.flexDirection = 'row';
         buttonContainer.style.flexWrap = 'nowrap';
         buttonContainer.style.gap = '0'; // No gap between buttons
         buttonContainer.style.padding = '2px';
+        buttonContainer.style.margin = '10px auto'; // Add space above and below, center horizontally
+        buttonContainer.style.width = 'fit-content'; // Size to content
         buttonContainer.style.borderRadius = '4px';
-        buttonContainer.style.backgroundColor = 'rgba(30, 30, 30, 0.6)';
-        // Ensure buttons are above the 3D canvas
-        buttonContainer.style.zIndex = '999';
-        buttonContainer.style.pointerEvents = 'auto';
+        buttonContainer.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
+        buttonContainer.style.zIndex = '10';
         
         // Button style function
         const styleButton = (button) => {
@@ -1144,8 +1143,8 @@ export class EnhancedTCMVisualization {
             buttonContainer.appendChild(button);
         });
         
-        // Add the button container to the visualization container
-        container.appendChild(buttonContainer);
+        // Insert the button container between visualization and controls
+        visualizationContainer.insertAdjacentElement('afterend', buttonContainer);
     }
     
     zoomToFit() {
