@@ -404,10 +404,10 @@ export function setupUI(visualization) {
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
         // Function to toggle the advanced settings panel
-        const toggleAdvancedSettings = () => {
+        const toggleAdvancedSettings = (forceExpand = false) => {
             const isCollapsed = advancedSettingsContent.style.display === 'none';
             
-            if (isCollapsed) {
+            if (isCollapsed || forceExpand) {
                 // Expand
                 advancedSettingsContent.style.display = 'block';
                 collapseAdvancedBtn.textContent = '▲';
@@ -419,8 +419,11 @@ export function setupUI(visualization) {
         };
         
         // Add click event to both the header and the collapse button
-        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-        collapseAdvancedBtn.addEventListener('click', toggleAdvancedSettings);
+        advancedSettingsHeader.addEventListener('click', () => toggleAdvancedSettings());
+        collapseAdvancedBtn.addEventListener('click', () => toggleAdvancedSettings());
+        
+        // Initially expand the advanced settings to show controls
+        toggleAdvancedSettings(true);
     }
     
     // Curved Stem toggle
