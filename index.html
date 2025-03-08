@@ -246,7 +246,12 @@
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 10px 10px; padding: 0;">
             <h1 style="font-size: 1.5rem; text-align: left; margin: 0; padding: 0; font-weight: bold;">Textile Color System Visualizer</h1>
-            <button id="aboutButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">About</button>
+            <div>
+                <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
+                    <i class="fas fa-download" style="margin-right: 5px;"></i>Download
+                </button>
+                <button id="aboutButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">About</button>
+            </div>
         </div>
         <div class="visualization-container">
             <div id="visualization"></div>
@@ -536,9 +541,37 @@
         // About modal functionality
         document.addEventListener('DOMContentLoaded', function() {
             const aboutButton = document.getElementById('aboutButton');
+            const downloadButton = document.getElementById('downloadButton');
             const aboutModal = document.getElementById('aboutModal');
             const closeAboutModal = document.getElementById('closeAboutModal');
             // Modal display handling only - date/version managed by version.js
+            
+            // Download button functionality
+            downloadButton.addEventListener('click', function() {
+                // Get the visualization canvas
+                const visualizationDiv = document.getElementById('visualization');
+                const canvas = visualizationDiv.querySelector('canvas');
+                
+                if (canvas) {
+                    // Create a temporary link element
+                    const link = document.createElement('a');
+                    
+                    // Set the download attributes
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                    link.download = `tcs-visualizer-${timestamp}.png`;
+                    
+                    // Convert canvas to data URL and set as href
+                    link.href = canvas.toDataURL('image/png');
+                    
+                    // Append to body, click, and remove
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    console.error('Canvas element not found in visualization div');
+                    alert('Unable to download image. Please try again later.');
+                }
+            });
             
             aboutButton.addEventListener('click', function() {
                 aboutModal.style.display = 'block';
