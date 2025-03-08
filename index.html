@@ -50,11 +50,15 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            flex: 1;
         }
         .visualization-container {
             width: 100%;
@@ -245,64 +249,25 @@
         .page-footer {
             background-color: var(--container-bg);
             color: var(--text-color);
-            padding: 30px 20px 10px;
-            margin-top: 30px;
+            padding: 20px 0;
+            margin-top: auto;
             box-shadow: 0 -2px 10px var(--shadow-color);
             width: 100%;
             box-sizing: border-box;
+            text-align: center;
+            font-size: 0.9rem;
         }
         
         .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
             max-width: 1200px;
             margin: 0 auto;
-            gap: 30px;
+            padding: 0 20px;
         }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .footer-section h4 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: var(--heading-color);
-        }
-        
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .footer-section ul li {
-            margin-bottom: 8px;
-        }
-        
-        .footer-section a {
-            color: var(--text-color);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        
-        .footer-section a:hover {
-            color: var(--button-hover);
-            text-decoration: underline;
-        }
-        
+                
         .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            margin-top: 20px;
+            padding-top: 10px;
+            margin-top: 10px;
             border-top: 1px solid var(--selector-border);
-            font-size: 0.9rem;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
             opacity: 0.8;
         }
     </style>
@@ -603,27 +568,9 @@
     <!-- Page Footer -->
     <footer id="page-footer" class="page-footer">
         <div class="footer-content">
-            <div class="footer-section">
-                <h4>Textile Color System Visualizer</h4>
-                <p>A powerful tool for visualizing color relationships in textile design</p>
+            <div id="footer-version-info">
+                <!-- Version info will be inserted here by version.js -->
             </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#" id="footerAboutLink">About</a></li>
-                    <li><a href="https://hextra.io" target="_blank">HEXTRA.io</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="#" id="downloadLink">Download Current View</a></li>
-                    <li><a href="#" id="themeToggleLink">Toggle Theme</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom" id="footer-version-info">
-            <!-- Version info will be inserted here by version.js -->
         </div>
     </footer>
 

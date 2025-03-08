@@ -127,15 +127,47 @@ export class EnhancedTCMVisualization {
     }
     
     /**
-     * Capture the current visualization as an image
+     * Capture the current visualization as an image with company information
      * @returns {string} Data URL of the image
      */
     captureImage() {
         // Make sure we render the scene before capturing
         this.renderer.render(this.scene, this.camera);
         
-        // Return the canvas image data as a data URL
-        return this.renderer.domElement.toDataURL('image/png');
+        // Create a temporary canvas to add text/watermark
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const sourceCanvas = this.renderer.domElement;
+        
+        // Match the size of the 3D canvas
+        canvas.width = sourceCanvas.width;
+        canvas.height = sourceCanvas.height;
+        
+        // Draw the original visualization onto our temporary canvas
+        ctx.drawImage(sourceCanvas, 0, 0);
+        
+        // Add company and image information overlay
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+        
+        // Add text content
+        ctx.fillStyle = '#333';
+        ctx.font = '14px Arial, sans-serif';
+        
+        // Current date for the timestamp
+        const date = new Date();
+        const dateStr = date.toLocaleDateString();
+        
+        // Add company info
+        ctx.textAlign = 'left';
+        ctx.fillText('HEXTRA.io | TCS Visualizer', 15, canvas.height - 15);
+        
+        // Add timestamp
+        ctx.textAlign = 'right';
+        ctx.fillText(`Generated: ${dateStr}`, canvas.width - 15, canvas.height - 15);
+        
+        // Return the enhanced canvas image data as a data URL
+        return canvas.toDataURL('image/png');
     }
     
     setupLighting() {
