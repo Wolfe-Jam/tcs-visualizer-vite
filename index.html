@@ -58,7 +58,7 @@
         }
         .visualization-container {
             width: 100%;
-            height: 500px;
+            height: 600px; /* Increased height to prevent squashing */
             background-color: var(--container-bg);
             border-radius: 8px;
             box-shadow: 0 4px 6px var(--shadow-color);
@@ -432,6 +432,44 @@
                     </style>
                 </div>
                 
+                <!-- Advanced Settings Section -->
+                <div style="margin-bottom: 15px; border-top: 1px solid var(--selector-border); padding-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="advancedSettingsToggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Show</span>
+                        </div>
+                    </div>
+                    
+                    <div id="advancedSettingsContent" style="display: none;">
+                        <!-- Curved Stem Controls -->
+                        <div style="margin-bottom: 15px;">
+                            <div class="toggle-container" style="margin-bottom: 15px;">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="curvedStemToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Use Curved Stem</span>
+                            </div>
+                            
+                            <div id="stemOffsetControls">
+                                <label for="stemOffsetSlider">Stem Curvature</label>
+                                <input type="range" id="stemOffsetSlider" min="0.1" max="1.0" step="0.05" value="0.5" 
+                                       style="width: 100%; -webkit-appearance: none; -moz-appearance: none; -ms-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: var(--selector-bg); outline: none;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-color); margin-top: 5px;">
+                                    <span>Subtle</span>
+                                    <span>Pronounced</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Camera Control Buttons -->
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button id="resetCamera" style="background-color: var(--button-bg); color: var(--button-text); border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">Reset Camera</button>
                     <button id="setCamera" style="background-color: var(--button-bg); color: var(--button-text); border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">Set Camera</button>
@@ -452,41 +490,7 @@
                     }
                 </style>
             </div>
-            <div class="control-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h2 style="margin: 0;">Advanced Settings</h2>
-                    <div class="toggle-container">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="advancedSettingsToggle">
-                            <span class="slider"></span>
-                        </label>
-                        <span>Show Settings</span>
-                    </div>
-                </div>
-                
-                <div id="advancedSettingsContent" style="display: none;">
-                    <!-- Curved Stem Controls -->
-                    <div style="margin-bottom: 15px;">
-                        <div class="toggle-container" style="margin-bottom: 15px;">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="curvedStemToggle">
-                                <span class="slider"></span>
-                            </label>
-                            <span>Use Curved Stem</span>
-                        </div>
-                        
-                        <div id="stemOffsetControls">
-                            <label for="stemOffsetSlider">Stem Curvature</label>
-                            <input type="range" id="stemOffsetSlider" min="0.1" max="1.0" step="0.05" value="0.5" 
-                                   style="width: 100%; -webkit-appearance: none; -moz-appearance: none; -ms-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: var(--selector-bg); outline: none;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-color); margin-top: 5px;">
-                                <span>Subtle</span>
-                                <span>Pronounced</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
     <script type="module" src="/src/main.js"></script>
