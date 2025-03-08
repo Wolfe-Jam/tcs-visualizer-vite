@@ -444,6 +444,17 @@ export function setupUI(visualization) {
         });
     }
     
+    // Multiple Stems toggle
+    const multipleStemsToggle = document.getElementById('showMultipleStemsToggle');
+    if (multipleStemsToggle) {
+        // Set initial state based on visualization's property (default: false)
+        multipleStemsToggle.checked = visualization.showMultipleStems || false;
+        
+        multipleStemsToggle.addEventListener('change', (e) => {
+            visualization.toggleMultipleStems(e.target.checked);
+        });
+    }
+    
     // Stem Offset Slider
     const stemOffsetSlider = document.getElementById('stemOffsetSlider');
     const offsetValueDisplay = document.getElementById('offsetValue');
