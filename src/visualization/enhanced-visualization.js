@@ -1205,6 +1205,12 @@ export class EnhancedTCMVisualization {
         this.savedCameraPosition = this.camera.position.clone();
         this.savedCameraTarget = this.controls.target.clone();
         
+        // Also update the default camera position used by the original method
+        this.defaultCameraPosition = {
+            position: this.camera.position.clone(),
+            lookAt: this.controls.target.clone()
+        };
+        
         // Flash feedback to user - briefly change button color
         const button = event ? event.target : null;
         if (button) {
@@ -1219,6 +1225,34 @@ export class EnhancedTCMVisualization {
                 button.style.borderColor = originalBorder;
             }, 500);
         }
+        
+        // Provide visual feedback (similar to setCurrentCameraAsDefault)
+        const notification = document.createElement('div');
+        notification.textContent = 'Camera position saved!';
+        notification.style.position = 'absolute';
+        notification.style.top = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.backgroundColor = 'rgba(0, 150, 0, 0.8)';
+        notification.style.color = 'white';
+        notification.style.padding = '10px 20px';
+        notification.style.borderRadius = '4px';
+        notification.style.zIndex = '1000';
+        notification.style.transition = 'opacity 0.5s';
+        
+        // Get the container element
+        const container = document.getElementById('visualization-container') || document.body;
+        container.appendChild(notification);
+        
+        // Show notification briefly and then remove
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                if (container.contains(notification)) {
+                    container.removeChild(notification);
+                }
+            }, 500);
+        }, 2000);
     }
     
     // Helper method for camera animation

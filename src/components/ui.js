@@ -217,43 +217,9 @@ export function setupUI(visualization) {
         });
     }
     
-    // Reset camera button
-    const resetCameraButton = document.getElementById('resetCamera');
-    if (resetCameraButton) {
-        resetCameraButton.addEventListener('click', () => {
-            visualization.resetCamera();
-        });
-    }
-    
-    // Set camera button
-    const setCameraButton = document.getElementById('setCamera');
-    if (setCameraButton) {
-        setCameraButton.addEventListener('click', () => {
-            visualization.setCurrentCameraAsDefault();
-            
-            // Log camera position for reference
-            console.log('Camera Position:', {
-                position: {
-                    x: visualization.camera.position.x,
-                    y: visualization.camera.position.y,
-                    z: visualization.camera.position.z
-                },
-                target: {
-                    x: visualization.controls.target.x,
-                    y: visualization.controls.target.y,
-                    z: visualization.controls.target.z
-                }
-            });
-        });
-    }
-    
-    // Zoom to fit button
-    const zoomToFitButton = document.getElementById('zoomToFit');
-    if (zoomToFitButton) {
-        zoomToFitButton.addEventListener('click', () => {
-            visualization.zoomToFit();
-        });
-    }
+    // Camera controls have been moved to the View Bar
+    // Event listeners for these buttons are now defined in the addViewButtons method
+    // of the EnhancedTCMVisualization class
     
     // Lining toggle (formerly gradient toggle)
     const gradientToggle = document.getElementById('gradientToggle');
