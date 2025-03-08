@@ -46,6 +46,9 @@ export class EnhancedTCMVisualization {
         // Set initial display mode to solid
         this.setDisplayMode('solid');
         
+        // Add quick view camera preset buttons
+        this.setupQuickViewButtons();
+        
         this.animate();
         
         return this;
@@ -971,6 +974,166 @@ export class EnhancedTCMVisualization {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Set camera to side view (from positive X axis)
+     * Smoothly animates to the target position
+     */
+    setSideView() {
+        if (!this.camera || !this.controls) return;
+        
+        const targetPosition = new THREE.Vector3(5, 0, 0);
+        const targetLookAt = new THREE.Vector3(0, 0, 0);
+        this._animateCamera(targetPosition, targetLookAt);
+    }
+    
+    /**
+     * Set camera to top/plan view (from positive Y axis)
+     * Smoothly animates to the target position
+     */
+    setTopView() {
+        if (!this.camera || !this.controls) return;
+        
+        const targetPosition = new THREE.Vector3(0, 5, 0);
+        const targetLookAt = new THREE.Vector3(0, 0, 0);
+        this._animateCamera(targetPosition, targetLookAt);
+    }
+    
+    /**
+     * Set camera to front view (from positive Z axis)
+     * Smoothly animates to the target position
+     */
+    setFrontView() {
+        if (!this.camera || !this.controls) return;
+        
+        const targetPosition = new THREE.Vector3(0, 0, 5);
+        const targetLookAt = new THREE.Vector3(0, 0, 0);
+        this._animateCamera(targetPosition, targetLookAt);
+    }
+    
+    /**
+     * Set camera to isometric view (equal angle from all axes)
+     * Smoothly animates to the target position
+     */
+    setIsometricView() {
+        if (!this.camera || !this.controls) return;
+        
+        const targetPosition = new THREE.Vector3(3, 3, 3);
+        const targetLookAt = new THREE.Vector3(0, 0, 0);
+        this._animateCamera(targetPosition, targetLookAt);
+    }
+    
+    /**
+     * Set camera to cross-section view (close-up of the center)
+     * Smoothly animates to the target position
+     */
+    setCrossSectionView() {
+        if (!this.camera || !this.controls) return;
+        
+        const targetPosition = new THREE.Vector3(1, 0, 0);
+        const targetLookAt = new THREE.Vector3(0, 0, 0);
+        this._animateCamera(targetPosition, targetLookAt);
+    }
+    
+    /**
+     * Helper method to animate camera movement
+     * @private
+     */
+    _animateCamera(targetPosition, targetLookAt) {
+        // Smoothly animate to the target position
+        const duration = 800; // milliseconds
+        const startPosition = this.camera.position.clone();
+        const startLookAt = this.controls.target.clone();
+        const startTime = Date.now();
+        
+        const animate = () => {
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease function (cubic ease out)
+            const ease = 1 - Math.pow(1 - progress, 3);
+            
+            // Interpolate position
+            this.camera.position.lerpVectors(startPosition, targetPosition, ease);
+            
+            // Interpolate lookAt target
+            this.controls.target.lerpVectors(startLookAt, targetLookAt, ease);
+            this.controls.update();
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        };
+        
+        animate();
+    }
+    
+    /**
+     * Creates and adds quick camera view buttons to the visualization container
+     * Places buttons in the bottom right of the visualization container
+     */
+    setupQuickViewButtons() {
+        const container = document.getElementById('visualization');
+        if (!container) return;
+        
+        // Create a container for the quick view buttons
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'quick-view-buttons';
+        buttonContainer.style.position = 'absolute';
+        buttonContainer.style.bottom = '20px';
+        buttonContainer.style.right = '20px';
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.flexDirection = 'column';
+        buttonContainer.style.gap = '5px';
+        buttonContainer.style.zIndex = '100';
+        
+        // Button style function
+        const styleButton = (button) => {
+            button.style.backgroundColor = 'rgba(40, 40, 40, 0.7)';
+            button.style.color = 'white';
+            button.style.border = 'none';
+            button.style.borderRadius = '4px';
+            button.style.padding = '8px 12px';
+            button.style.cursor = 'pointer';
+            button.style.fontSize = '12px';
+            button.style.fontWeight = 'bold';
+            button.style.transition = 'all 0.3s ease';
+            button.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            
+            button.addEventListener('mouseover', () => {
+                button.style.backgroundColor = 'rgba(60, 60, 60, 0.9)';
+                button.style.transform = 'translateY(-2px)';
+            });
+            
+            button.addEventListener('mouseout', () => {
+                button.style.backgroundColor = 'rgba(40, 40, 40, 0.7)';
+                button.style.transform = 'translateY(0)';
+            });
+        };
+        
+        // Create view buttons
+        const views = [
+            { name: 'Side', method: this.setSideView.bind(this) },
+            { name: 'Top', method: this.setTopView.bind(this) },
+            { name: 'Front', method: this.setFrontView.bind(this) },
+            { name: 'Isometric', method: this.setIsometricView.bind(this) },
+            { name: 'Cross-Section', method: this.setCrossSectionView.bind(this) }
+        ];
+        
+        views.forEach(view => {
+            const button = document.createElement('button');
+            button.textContent = view.name;
+            button.title = `Switch to ${view.name} view`;
+            styleButton(button);
+            
+            button.addEventListener('click', view.method);
+            buttonContainer.appendChild(button);
+        });
+        
+        // Add the button container to the visualization container
+        container.appendChild(buttonContainer);
     }
     
     zoomToFit() {
