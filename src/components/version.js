@@ -35,27 +35,41 @@ export function initVersionDisplay() {
     const buildDate = getBuildDate();
     const currentYear = new Date().getFullYear();
     
-    // Add version info to the footer
-    const footer = document.createElement('footer');
-    footer.style.textAlign = 'center';
-    footer.style.padding = '10px';
-    footer.style.fontSize = '12px';
-    footer.style.color = 'var(--text-color)';
-    footer.style.opacity = '0.7';
-    footer.style.marginTop = '20px';
-    footer.style.borderTop = '1px solid var(--selector-border)';
+    // Look for the footer-version-info element in our new footer structure
+    const footerVersionInfo = document.getElementById('footer-version-info');
     
-    // Create a container div with max-width to match other UI elements
-    const footerContainer = document.createElement('div');
-    footerContainer.style.maxWidth = '850px';
-    footerContainer.style.margin = '0 auto';
-    footer.appendChild(footerContainer);
-    
-    footerContainer.innerHTML = `<p style="margin: 5px 0;">TCS Visualizer v${version} | Build: ${buildDate}</p>
+    if (footerVersionInfo) {
+        // If the new footer structure exists, update it
+        footerVersionInfo.innerHTML = `
+            <p style="margin: 5px 0;">TCS Visualizer v${version} | Build: ${buildDate}</p>
+            <p style="margin: 5px 0;">&copy; ${currentYear} HEXTRA.io All rights reserved</p>
+        `;
+    } else {
+        // Fallback to the old method if the new footer isn't found
+        console.warn('New footer element not found, creating standalone footer');
+        
+        // Add version info to the footer
+        const footer = document.createElement('footer');
+        footer.style.textAlign = 'center';
+        footer.style.padding = '10px';
+        footer.style.fontSize = '12px';
+        footer.style.color = 'var(--text-color)';
+        footer.style.opacity = '0.7';
+        footer.style.marginTop = '20px';
+        footer.style.borderTop = '1px solid var(--selector-border)';
+        
+        // Create a container div with max-width to match other UI elements
+        const footerContainer = document.createElement('div');
+        footerContainer.style.maxWidth = '850px';
+        footerContainer.style.margin = '0 auto';
+        footer.appendChild(footerContainer);
+        
+        footerContainer.innerHTML = `<p style="margin: 5px 0;">TCS Visualizer v${version} | Build: ${buildDate}</p>
 <p style="margin: 5px 0;">&copy; ${currentYear} HEXTRA.io All rights reserved</p>`;
-    
-    // Add the footer to the end of the body for proper positioning
-    document.body.appendChild(footer);
+        
+        // Add the footer to the end of the body for proper positioning
+        document.body.appendChild(footer);
+    }
     
     // Also update the About Box if it exists
     updateAboutBoxVersionInfo(version, buildDate, currentYear);
