@@ -244,7 +244,10 @@
   </head>
   <body>
     <div class="container">
-        <h1 style="font-size: 1.5rem; text-align: left; margin: 10px 0 10px 10px; padding: 0; font-weight: bold;">Textile Color System Visualizer</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 10px 10px; padding: 0;">
+            <h1 style="font-size: 1.5rem; text-align: left; margin: 0; padding: 0; font-weight: bold;">Textile Color System Visualizer</h1>
+            <button id="aboutButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">About</button>
+        </div>
         <div class="visualization-container">
             <div id="visualization"></div>
         </div>
@@ -438,7 +441,7 @@
                 </div>
                 
                 <!-- Advanced Settings Section -->
-                <div style="border-top: 1px solid var(--selector-border); padding: 15px; margin-bottom: 15px; background-color: var(--container-bg); border-radius: 6px; box-shadow: 0 1px 3px var(--shadow-color);">
+                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
                     <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;">
                         <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
@@ -508,6 +511,52 @@
 
         </div>
     </div>
+    <!-- About Modal -->
+    <div id="aboutModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+        <div style="background-color: var(--container-bg); margin: 15% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 600px; box-shadow: 0 4px 8px var(--shadow-color);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <h2 style="margin: 0;">About Textile Color System Visualizer</h2>
+                <span id="closeAboutModal" style="color: var(--text-color); font-size: 1.5rem; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <p>This application provides an interactive 3D visualization of the Textile Color System, allowing users to explore color relationships and patterns.</p>
+                <p>The Textile Color System is a comprehensive approach to understanding and working with color in textile design, manufacturing, and related fields.</p>
+                <h3>Features:</h3>
+                <ul>
+                    <li>Interactive 3D visualization</li>
+                    <li>Multiple display modes (Construction, Transparent, Solid)</li>
+                    <li>Customizable color schemes</li>
+                    <li>Advanced settings for detailed visualization control</li>
+                </ul>
+                <p>Developed by James Wolfe &copy; 2023-2025</p>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
+    
+    <script>
+        // About modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const aboutButton = document.getElementById('aboutButton');
+            const aboutModal = document.getElementById('aboutModal');
+            const closeAboutModal = document.getElementById('closeAboutModal');
+            
+            aboutButton.addEventListener('click', function() {
+                aboutModal.style.display = 'block';
+            });
+            
+            closeAboutModal.addEventListener('click', function() {
+                aboutModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside of it
+            window.addEventListener('click', function(event) {
+                if (event.target === aboutModal) {
+                    aboutModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
   </body>
 </html>
