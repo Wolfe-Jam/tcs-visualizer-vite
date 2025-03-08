@@ -538,24 +538,7 @@
             const aboutButton = document.getElementById('aboutButton');
             const aboutModal = document.getElementById('aboutModal');
             const closeAboutModal = document.getElementById('closeAboutModal');
-            // Get modal elements
-            
-            // Set dynamic date elements
-            const currentYear = new Date().getFullYear();
-            const buildDate = document.getElementById('build-date');
-            const copyrightYear = document.getElementById('copyright-year');
-            const footerCopyrightYear = document.getElementById('footer-copyright-year');
-            const footerBuildDate = document.getElementById('footer-build-date');
-            
-            // Set the current year for copyright in both about box and footer
-            copyrightYear.textContent = currentYear;
-            footerCopyrightYear.textContent = currentYear;
-            
-            // Keep build dates in sync
-            // For dynamic date, uncomment the following:
-            // const todayFormatted = new Date().toISOString().split('T')[0];
-            // buildDate.textContent = todayFormatted;
-            // footerBuildDate.textContent = todayFormatted;
+            // Modal display handling only - date/version managed by version.js
             
             aboutButton.addEventListener('click', function() {
                 aboutModal.style.display = 'block';
@@ -573,11 +556,5 @@
             });
         });
     </script>
-    <footer style="text-align: center; padding: 10px; margin-top: 20px; font-size: 0.85rem; color: var(--text-color); border-top: 1px solid var(--selector-border);">
-        <div style="max-width: 850px; margin: 0 auto;">
-            <p style="margin: 5px 0;">TCS Visualizer v1.0.0 | Build: <span id="footer-build-date">2025-03-08</span></p>
-            <p style="margin: 5px 0;">© <span id="footer-copyright-year">2025</span> HEXTRA.io All rights reserved</p>
-        </div>
-    </footer>
   </body>
 </html>
