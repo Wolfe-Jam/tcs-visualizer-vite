@@ -245,6 +245,59 @@
             line-height: 1;
         }
         
+        /* Banner Styles */
+        .page-banner {
+            background-color: #003847;
+            color: #ffffff;
+            padding: 15px 0;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            position: relative;
+            z-index: 10;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .banner-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .banner-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.9rem;
+            transition: color 0.2s, opacity 0.2s;
+        }
+        
+        .banner-links a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+            opacity: 1;
+        }
+        
+        /* Light mode specific styles */
+        [data-theme="light"] .page-banner {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Dark mode adjustments */
+        [data-theme="dark"] .page-banner {
+            background-color: #001f28; /* Slightly darker in dark mode */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
         /* Footer Styles */
         .page-footer {
             background-color: var(--container-bg);
@@ -273,9 +326,21 @@
     </style>
   </head>
   <body>
+    <!-- Page Banner -->
+    <div class="page-banner">
+      <div class="banner-content">
+        <h1 class="banner-title">Textile Color System Visualizer</h1>
+        <div class="banner-links">
+          <a href="#" id="bannerDownloadLink"><i class="fas fa-download" style="margin-right: 5px;"></i>Download</a>
+          <a href="#" id="bannerAboutLink">About</a>
+          <a href="https://hextra.io" target="_blank">HEXTRA.io</a>
+          <a href="#" id="bannerThemeToggle">Toggle Theme</a>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 10px 10px; padding: 0;">
-            <h1 style="font-size: 1.5rem; text-align: left; margin: 0; padding: 0; font-weight: bold;">Textile Color System Visualizer</h1>
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin: 10px 0; padding: 0;">
             <div>
                 <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
                     <i class="fas fa-download" style="margin-right: 5px;"></i>Download
@@ -586,6 +651,9 @@
             const footerAboutLink = document.getElementById('footerAboutLink');
             const downloadLink = document.getElementById('downloadLink');
             const themeToggleLink = document.getElementById('themeToggleLink');
+            const bannerAboutLink = document.getElementById('bannerAboutLink');
+            const bannerThemeToggle = document.getElementById('bannerThemeToggle');
+            const bannerDownloadLink = document.getElementById('bannerDownloadLink');
             // Modal display handling only - date/version managed by version.js
             
             // Download button functionality
@@ -675,6 +743,49 @@
                     const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
                     document.documentElement.setAttribute('data-theme', theme);
                     localStorage.setItem('tcs-theme', theme);
+                });
+            }
+            
+            // Banner link handlers
+            if (bannerAboutLink) {
+                bannerAboutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    aboutModal.style.display = 'block';
+                });
+            }
+            
+            if (bannerThemeToggle) {
+                bannerThemeToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Toggle between light and dark theme
+                    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('tcs-theme', theme);
+                });
+            }
+            
+            if (bannerDownloadLink) {
+                bannerDownloadLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Use the same download functionality as the main download button
+                    if (window.viz && typeof window.viz.captureImage === 'function') {
+                        try {
+                            const imageDataUrl = window.viz.captureImage();
+                            const link = document.createElement('a');
+                            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                            link.download = `tcs-visualizer-${timestamp}.png`;
+                            link.href = imageDataUrl;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        } catch (error) {
+                            console.error('Error capturing image:', error);
+                            alert('Unable to download image. Please try again later.');
+                        }
+                    } else {
+                        console.error('Visualization not available or captureImage method not found');
+                        alert('Visualization not ready. Please try again later.');
+                    }
                 });
             }
         });
