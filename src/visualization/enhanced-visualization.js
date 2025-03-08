@@ -1074,28 +1074,32 @@ export class EnhancedTCMVisualization {
      * Creates and adds quick camera view buttons to the visualization container
      * Places buttons in the bottom right of the visualization container
      */
+    // Store user's saved camera position and target
+    savedCameraPosition = null;
+    savedCameraTarget = null;
+    
     setupQuickViewButtons() {
         // Find the visualization container and controls container
         const visualizationContainer = document.querySelector('.visualization-container');
         const controlsContainer = document.querySelector('.controls');
         if (!visualizationContainer || !controlsContainer) return;
         
-        // Create a container for the quick view buttons
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'quick-view-buttons';
+        // Create a container for the view bar
+        const viewBar = document.createElement('div');
+        viewBar.className = 'view-bar'; // Rename to 'view-bar'
         
-        // Style the button container to be centered between visualization and controls
-        buttonContainer.style.display = 'flex';
-        buttonContainer.style.justifyContent = 'center'; // Center buttons horizontally
-        buttonContainer.style.flexDirection = 'row';
-        buttonContainer.style.flexWrap = 'nowrap';
-        buttonContainer.style.gap = '0'; // No gap between buttons
-        buttonContainer.style.padding = '2px';
-        buttonContainer.style.margin = '10px auto'; // Add space above and below, center horizontally
-        buttonContainer.style.width = 'fit-content'; // Size to content
-        buttonContainer.style.borderRadius = '4px';
-        buttonContainer.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
-        buttonContainer.style.zIndex = '10';
+        // Style the view bar to be centered between visualization and controls
+        viewBar.style.display = 'flex';
+        viewBar.style.justifyContent = 'center'; // Center buttons horizontally
+        viewBar.style.flexDirection = 'row';
+        viewBar.style.flexWrap = 'nowrap';
+        viewBar.style.gap = '0'; // No gap between buttons
+        viewBar.style.padding = '2px';
+        viewBar.style.margin = '10px auto'; // Add space above and below, center horizontally
+        viewBar.style.width = 'fit-content'; // Size to content
+        viewBar.style.borderRadius = '4px';
+        viewBar.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
+        viewBar.style.zIndex = '10';
         
         // Button style function
         const styleButton = (button) => {
@@ -1124,6 +1128,15 @@ export class EnhancedTCMVisualization {
             });
         };
         
+        // Optional: Add a separator between button groups
+        const createSeparator = () => {
+            const separator = document.createElement('div');
+            separator.style.width = '1px';
+            separator.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+            separator.style.margin = '0 4px';
+            return separator;
+        };
+        
         // Create view buttons with shorter labels for a more compact design
         const views = [
             { name: 'Side', method: this.setSideView.bind(this) },
@@ -1133,6 +1146,7 @@ export class EnhancedTCMVisualization {
             { name: 'Sect', method: this.setCrossSectionView.bind(this) }
         ];
         
+        // Add camera preset buttons
         views.forEach(view => {
             const button = document.createElement('button');
             button.textContent = view.name;
@@ -1140,23 +1154,75 @@ export class EnhancedTCMVisualization {
             styleButton(button);
             
             button.addEventListener('click', view.method);
-            buttonContainer.appendChild(button);
+            viewBar.appendChild(button);
         });
         
-        // Insert the button container between visualization and controls
-        visualizationContainer.insertAdjacentElement('afterend', buttonContainer);
+        // Add a separator before camera control buttons
+        viewBar.appendChild(createSeparator());
+        
+        // Add camera control buttons
+        const cameraControls = [
+            { name: 'Reset', method: this.resetCamera.bind(this), title: 'Reset camera to default position' },
+            { name: 'Set', method: this.setCamera.bind(this), title: 'Save current camera position' },
+            { name: 'Fit', method: this.zoomToFit.bind(this), title: 'Zoom to fit model in view' }
+        ];
+        
+        cameraControls.forEach(control => {
+            const button = document.createElement('button');
+            button.textContent = control.name;
+            button.title = control.title;
+            styleButton(button);
+            
+            button.addEventListener('click', control.method);
+            viewBar.appendChild(button);
+        });
+        
+        // Insert the view bar between visualization and controls
+        visualizationContainer.insertAdjacentElement('afterend', viewBar);
     }
     
-    zoomToFit() {
+    // Reset camera to default position
+    resetCamera() {
         if (!this.camera || !this.controls) {
             return;
         }
         
-        // Use the user's preferred camera position instead of calculating one
-        const newPosition = new THREE.Vector3(0.005039515598749067, 2.3361920342575657, 1.9404878995926225);
-        const center = new THREE.Vector3(0, 0, 0); // Target center
+        // Default camera position
+        const defaultPosition = new THREE.Vector3(0.005039515598749067, 2.3361920342575657, 1.9404878995926225);
+        const defaultTarget = new THREE.Vector3(0, 0, 0);
         
-        // Animate to the new position
+        // Animate to the default position
+        this.animateCameraMove(defaultPosition, defaultTarget);
+    }
+    
+    // Save current camera position and target
+    setCamera(event) {
+        if (!this.camera || !this.controls) {
+            return;
+        }
+        
+        // Save current camera position and target
+        this.savedCameraPosition = this.camera.position.clone();
+        this.savedCameraTarget = this.controls.target.clone();
+        
+        // Flash feedback to user - briefly change button color
+        const button = event ? event.target : null;
+        if (button) {
+            const originalBg = button.style.backgroundColor;
+            const originalBorder = button.style.borderColor;
+            
+            button.style.backgroundColor = 'rgba(0, 150, 0, 0.9)';
+            button.style.borderColor = 'rgba(0, 255, 0, 0.5)';
+            
+            setTimeout(() => {
+                button.style.backgroundColor = originalBg;
+                button.style.borderColor = originalBorder;
+            }, 500);
+        }
+    }
+    
+    // Helper method for camera animation
+    animateCameraMove(newPosition, newTarget) {
         const duration = 1000; // milliseconds
         const startPosition = this.camera.position.clone();
         const startTarget = this.controls.target.clone();
@@ -1177,21 +1243,44 @@ export class EnhancedTCMVisualization {
                 ease
             );
             
-            // Interpolate target (look at center)
+            // Interpolate target
             this.controls.target.lerpVectors(
                 startTarget,
-                center,
+                newTarget,
                 ease
             );
             
+            // Update controls
             this.controls.update();
             
+            // Continue animation if not complete
             if (progress < 1) {
                 requestAnimationFrame(animate);
             }
         };
         
+        // Start animation
         animate();
+    }
+    
+    // Zoom to fit the model in view
+    zoomToFit() {
+        if (!this.camera || !this.controls) {
+            return;
+        }
+        
+        // If user has saved a camera position, use that instead
+        if (this.savedCameraPosition && this.savedCameraTarget) {
+            this.animateCameraMove(this.savedCameraPosition, this.savedCameraTarget);
+            return;
+        }
+        
+        // Otherwise use the default optimal position
+        const newPosition = new THREE.Vector3(0.005039515598749067, 2.3361920342575657, 1.9404878995926225);
+        const newTarget = new THREE.Vector3(0, 0, 0); // Target center
+        
+        // Use our helper method to animate the camera
+        this.animateCameraMove(newPosition, newTarget);
         
         // Provide visual feedback
         const notification = document.createElement('div');
@@ -1207,18 +1296,19 @@ export class EnhancedTCMVisualization {
         notification.style.zIndex = '1000';
         notification.style.transition = 'opacity 0.5s';
         
-        const container = document.getElementById('visualization');
-        if (container) {
-            container.appendChild(notification);
-            
-            // Fade out and remove after 2 seconds
+        // Get the container element
+        const container = document.getElementById('visualization-container') || document.body;
+        container.appendChild(notification);
+        
+        // Show notification briefly and then remove
+        setTimeout(() => {
+            notification.style.opacity = '0';
             setTimeout(() => {
-                notification.style.opacity = '0';
-                setTimeout(() => {
+                if (container.contains(notification)) {
                     container.removeChild(notification);
-                }, 500);
-            }, 2000);
-        }
+                }
+            }, 500);
+        }, 2000);
     }
     
     toggleGrid(showGrid) {
