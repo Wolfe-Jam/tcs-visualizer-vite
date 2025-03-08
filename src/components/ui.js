@@ -447,6 +447,35 @@ export function setupUI(visualization) {
         });
     }
     
+    // Stem Segments Slider
+    const stemSegmentsSlider = document.getElementById('stemSegmentsSlider');
+    const segmentsValueDisplay = document.getElementById('segmentsValue');
+    
+    if (stemSegmentsSlider) {
+        // Set initial value (12 segments is the default)
+        const initialSegments = visualization.curvedStemSegments || 12;
+        stemSegmentsSlider.value = initialSegments;
+        
+        if (segmentsValueDisplay) {
+            segmentsValueDisplay.textContent = initialSegments;
+        }
+        
+        // Update when slider is moved
+        stemSegmentsSlider.addEventListener('input', (e) => {
+            const segments = parseInt(e.target.value);
+            
+            // Update the display value
+            if (segmentsValueDisplay) {
+                segmentsValueDisplay.textContent = segments;
+            }
+            
+            // If the visualization has a method to update segments, call it
+            if (visualization.setStemSegments) {
+                visualization.setStemSegments(segments);
+            }
+        });
+    }
+    
     // Initialize with default color
     updateColorDisplay('#FF5733', visualization);
 }

@@ -29,6 +29,7 @@ export class EnhancedTCMVisualization {
         this.originalCylinderMaterial = null; // Store original material
         this.stemMaxOffset = 0.4; // Default maximum offset (20% of cylinder radius)
         this.useCurvedStem = true; // Use curved stem by default
+        this.curvedStemSegments = 12; // Default number of segments for 360-degree visualization
         
         this.init();
     }
@@ -247,7 +248,7 @@ export class EnhancedTCMVisualization {
         }
         
         // Calculate points around a circle for 360-degree visualization
-        const segments = 8; // Number of segments around the circle
+        const segments = this.curvedStemSegments || 12; // Use the configurable property
         
         // Create multiple curved stems around the center axis
         const curves = [];
@@ -398,6 +399,21 @@ export class EnhancedTCMVisualization {
      */
     setStemOffset(offset) {
         this.stemMaxOffset = offset;
+        if (this.useCurvedStem) {
+            this.createCurvedStem();
+        }
+    }
+    
+    /**
+     * Sets the number of segments for the 360-degree curved stem visualization
+     * @param {number} segments - The number of segments to use (4-24)
+     */
+    setStemSegments(segments) {
+        // Constrain to reasonable values
+        segments = Math.max(4, Math.min(segments, 24));
+        this.curvedStemSegments = segments;
+        
+        // Only recreate the stem if we're using the curved stem
         if (this.useCurvedStem) {
             this.createCurvedStem();
         }
