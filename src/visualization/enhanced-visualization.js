@@ -237,9 +237,10 @@ export class EnhancedTCMVisualization {
     }
     
     /**
-     * Creates a curved stem based on the original v0.5 implementation
-     * The stem represents material absorption with precise curvature and color gradient
-     * Full 360-degree visualization
+     * Creates the updated default stem view showing both:
+     * 1. The straight central stem 
+     * 2. A single curved stem at 3 o'clock position
+     * This allows for direct visual comparison between the straight and curved representations
      */
     createCurvedStem() {
         // Remove existing centerLine if it exists
@@ -247,106 +248,106 @@ export class EnhancedTCMVisualization {
             this.scene.remove(this.centerLine);
         }
         
-        // Calculate points around a circle for 360-degree visualization
-        const segments = this.curvedStemSegments || 12; // Use the configurable property
-        
-        // Create multiple curved stems around the center axis
-        const curves = [];
-        
-        for (let i = 0; i < segments; i++) {
-            // Calculate angle based on segment
-            const angle = (i / segments) * Math.PI * 2;
-            const cosAngle = Math.cos(angle);
-            const sinAngle = Math.sin(angle);
-            
-            // Create a set of points for this segment
-            const segmentPoints = [
-                { pos: new THREE.Vector3(0, -1.5, 0), color: new THREE.Color(0x000000) },  // Bottom (black)
-                { 
-                    pos: new THREE.Vector3(
-                        this.stemMaxOffset * 0.5 * cosAngle, 
-                        -0.75, 
-                        this.stemMaxOffset * 0.5 * sinAngle
-                    ), 
-                    color: this.currentColor.clone().multiplyScalar(0.3) // Lower middle (30% color)
-                },
-                { 
-                    pos: new THREE.Vector3(
-                        this.stemMaxOffset * cosAngle, 
-                        0, 
-                        this.stemMaxOffset * sinAngle
-                    ), 
-                    color: this.currentColor.clone() // Middle (full color)
-                },
-                { 
-                    pos: new THREE.Vector3(
-                        this.stemMaxOffset * 0.5 * cosAngle, 
-                        0.75, 
-                        this.stemMaxOffset * 0.5 * sinAngle
-                    ), 
-                    color: this.currentColor.clone().lerp(new THREE.Color(0xffffff), 0.7) // Upper middle (70% to white)
-                },
-                { pos: new THREE.Vector3(0, 1.5, 0), color: new THREE.Color(0xffffff) }  // Top (white)
-            ];
-            
-            // Create curve for this segment
-            const curve = new THREE.CatmullRomCurve3(segmentPoints.map(p => p.pos));
-            curves.push({ curve, colors: segmentPoints.map(p => p.color) });
-        }
-        
-        // Create a group to hold all the stems
+        // Create a group to hold both stems
         const stemGroup = new THREE.Group();
         
-        // Add each curved stem to the group
-        curves.forEach((curveData) => {
-            const tubeGeometry = new THREE.TubeGeometry(curveData.curve, 50, 0.05, 8, false);
-            
-            // Create shader material for this stem
-            const stemMaterial = new THREE.ShaderMaterial({
-                uniforms: {
-                    colors: { value: curveData.colors },
-                    time: { value: 0 }
-                },
-                vertexShader: `
-                    varying float vPosition;
-                    
-                    void main() {
-                        vPosition = position.y;
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                    }
-                `,
-                fragmentShader: `
-                    uniform vec3 colors[5];
-                    uniform float time;
-                    varying float vPosition;
-                    
-                    void main() {
-                        float t = (vPosition + 1.5) / 3.0;
-                        vec3 color;
-                        
-                        if (t < 0.25) {
-                            color = mix(colors[0], colors[1], t * 4.0);
-                        } else if (t < 0.5) {
-                            color = mix(colors[1], colors[2], (t - 0.25) * 4.0);
-                        } else if (t < 0.75) {
-                            color = mix(colors[2], colors[3], (t - 0.5) * 4.0);
-                        } else {
-                            color = mix(colors[3], colors[4], (t - 0.75) * 4.0);
-                        }
-                        
-                        // Add subtle animation
-                        float pulse = sin(time * 2.0 + t * 10.0) * 0.1 + 0.9;
-                        color *= pulse;
-                        
-                        gl_FragColor = vec4(color, 1.0);
-                    }
-                `
-            });
-            
-            // Create mesh for this stem and add to group
-            const stemMesh = new THREE.Mesh(tubeGeometry, stemMaterial);
-            stemGroup.add(stemMesh);
+        // First, create the straight central stem
+        const centerLineGeometry = new THREE.CylinderGeometry(0.05, 0.05, 3, 8);
+        const centerLineMaterial = new THREE.MeshPhongMaterial({
+            color: this.currentColor,
+            emissive: this.currentColor,
+            emissiveIntensity: 0.5
         });
+        const straightStem = new THREE.Mesh(centerLineGeometry, centerLineMaterial);
+        stemGroup.add(straightStem);
+        
+        // Now, add a single curved stem at 3 o'clock (0 degrees)
+        const angle = 0; // 0 radians = 3 o'clock position (right side)
+        const cosAngle = Math.cos(angle);
+        const sinAngle = Math.sin(angle);
+        
+        // Create a set of points for the curved stem
+        const segmentPoints = [
+            { pos: new THREE.Vector3(0, -1.5, 0), color: new THREE.Color(0x000000) },  // Bottom (black)
+            { 
+                pos: new THREE.Vector3(
+                    this.stemMaxOffset * 0.5 * cosAngle, 
+                    -0.75, 
+                    this.stemMaxOffset * 0.5 * sinAngle
+                ), 
+                color: this.currentColor.clone().multiplyScalar(0.3) // Lower middle (30% color)
+            },
+            { 
+                pos: new THREE.Vector3(
+                    this.stemMaxOffset * cosAngle, 
+                    0, 
+                    this.stemMaxOffset * sinAngle
+                ), 
+                color: this.currentColor.clone() // Middle (full color)
+            },
+            { 
+                pos: new THREE.Vector3(
+                    this.stemMaxOffset * 0.5 * cosAngle, 
+                    0.75, 
+                    this.stemMaxOffset * 0.5 * sinAngle
+                ), 
+                color: this.currentColor.clone().lerp(new THREE.Color(0xffffff), 0.7) // Upper middle (70% to white)
+            },
+            { pos: new THREE.Vector3(0, 1.5, 0), color: new THREE.Color(0xffffff) }  // Top (white)
+        ];
+        
+        // Create the curved path
+        const curve = new THREE.CatmullRomCurve3(segmentPoints.map(p => p.pos));
+        const colors = segmentPoints.map(p => p.color);
+        
+        // Create the geometry for the curved stem
+        const tubeGeometry = new THREE.TubeGeometry(curve, 50, 0.05, 8, false);
+        
+        // Create shader material for the curved stem
+        const stemMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                colors: { value: colors },
+                time: { value: 0 }
+            },
+            vertexShader: `
+                varying float vPosition;
+                
+                void main() {
+                    vPosition = position.y;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 colors[5];
+                uniform float time;
+                varying float vPosition;
+                
+                void main() {
+                    float t = (vPosition + 1.5) / 3.0;
+                    vec3 color;
+                    
+                    if (t < 0.25) {
+                        color = mix(colors[0], colors[1], t * 4.0);
+                    } else if (t < 0.5) {
+                        color = mix(colors[1], colors[2], (t - 0.25) * 4.0);
+                    } else if (t < 0.75) {
+                        color = mix(colors[2], colors[3], (t - 0.5) * 4.0);
+                    } else {
+                        color = mix(colors[3], colors[4], (t - 0.75) * 4.0);
+                    }
+                    
+                    // Add subtle animation
+                    float pulse = sin(time * 2.0 + t * 10.0) * 0.1 + 0.9;
+                    color *= pulse;
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `
+        });
+        
+        // Create mesh for the curved stem and add to group
+        const curvedStem = new THREE.Mesh(tubeGeometry, stemMaterial);
+        stemGroup.add(curvedStem);
         
         // Store the group as centerLine and add to scene
         this.centerLine = stemGroup;
@@ -420,13 +421,16 @@ export class EnhancedTCMVisualization {
     }
     
     /**
-     * Toggles between curved and straight stem
+     * Toggles between the dual stem view (straight + curved) and just the straight stem
+     * @param {boolean} useCurved - Whether to use the dual stem view (straight + curved at 3 o'clock)
      */
     toggleCurvedStem(useCurved) {
         this.useCurvedStem = useCurved;
         if (useCurved) {
+            // Use the new dual stem view (straight + curved at 3 o'clock)
             this.createCurvedStem();
         } else {
+            // Use only the straight stem
             this.createStraightStem();
         }
     }
