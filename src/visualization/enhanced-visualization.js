@@ -1082,58 +1082,55 @@ export class EnhancedTCMVisualization {
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'quick-view-buttons';
         
-        // Position buttons directly over the canvas, inside the visualization container
+        // Position buttons in the top-right area over the visualization
         buttonContainer.style.position = 'absolute';
-        buttonContainer.style.bottom = '40px'; // More padding from bottom
-        buttonContainer.style.right = '40px'; // More padding from right
+        buttonContainer.style.top = '15px';
+        buttonContainer.style.right = '15px';
         buttonContainer.style.display = 'flex';
-        buttonContainer.style.flexDirection = 'column';
-        buttonContainer.style.gap = '8px';
+        buttonContainer.style.flexDirection = 'row'; // Horizontal layout
+        buttonContainer.style.flexWrap = 'nowrap';
+        buttonContainer.style.gap = '0'; // No gap between buttons
+        buttonContainer.style.padding = '2px';
+        buttonContainer.style.borderRadius = '4px';
+        buttonContainer.style.backgroundColor = 'rgba(30, 30, 30, 0.6)';
         // Ensure buttons are above the 3D canvas
         buttonContainer.style.zIndex = '999';
-        // Make sure buttons don't exceed the container
-        buttonContainer.style.maxWidth = '40%';
-        buttonContainer.style.maxHeight = '70%';
         buttonContainer.style.pointerEvents = 'auto';
         
         // Button style function
         const styleButton = (button) => {
-            button.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
+            button.style.backgroundColor = 'rgba(40, 40, 40, 0.85)';
             button.style.color = 'white';
-            button.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-            button.style.borderRadius = '6px';
-            button.style.padding = '10px 15px';
-            button.style.margin = '3px';
+            button.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+            button.style.borderRadius = '2px';
+            button.style.padding = '4px 6px';
+            button.style.margin = '0';
             button.style.cursor = 'pointer';
-            button.style.fontSize = '13px';
+            button.style.fontSize = '11px';
             button.style.fontWeight = 'bold';
             button.style.transition = 'all 0.2s ease';
-            button.style.boxShadow = '0 3px 8px rgba(0,0,0,0.3)';
+            button.style.boxShadow = 'none';
             button.style.textAlign = 'center';
-            button.style.minWidth = '110px';
+            button.style.minWidth = '40px'; // Smaller width for compact layout
             
             button.addEventListener('mouseover', () => {
                 button.style.backgroundColor = 'rgba(60, 60, 60, 0.95)';
-                button.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-                button.style.transform = 'translateY(-2px)';
-                button.style.boxShadow = '0 5px 10px rgba(0,0,0,0.4)';
+                button.style.borderColor = 'rgba(255, 255, 255, 0.4)';
             });
             
             button.addEventListener('mouseout', () => {
-                button.style.backgroundColor = 'rgba(30, 30, 30, 0.8)';
-                button.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                button.style.transform = 'translateY(0)';
-                button.style.boxShadow = '0 3px 8px rgba(0,0,0,0.3)';
+                button.style.backgroundColor = 'rgba(40, 40, 40, 0.85)';
+                button.style.borderColor = 'rgba(255, 255, 255, 0.2)';
             });
         };
         
-        // Create view buttons
+        // Create view buttons with shorter labels for a more compact design
         const views = [
             { name: 'Side', method: this.setSideView.bind(this) },
             { name: 'Top', method: this.setTopView.bind(this) },
             { name: 'Front', method: this.setFrontView.bind(this) },
-            { name: 'Isometric', method: this.setIsometricView.bind(this) },
-            { name: 'Cross-Section', method: this.setCrossSectionView.bind(this) }
+            { name: 'Iso', method: this.setIsometricView.bind(this) },
+            { name: 'Sect', method: this.setCrossSectionView.bind(this) }
         ];
         
         views.forEach(view => {
