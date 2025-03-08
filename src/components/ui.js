@@ -397,16 +397,30 @@ export function setupUI(visualization) {
         });
     }
     
-    // Advanced Settings toggle
-    const advancedSettingsToggle = document.getElementById('advancedSettingsToggle');
+    // Advanced Settings toggle with the collapse button
     const advancedSettingsContent = document.getElementById('advancedSettingsContent');
     const advancedSettingsHeader = document.getElementById('advancedSettingsHeader');
     const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
     
-    if (advancedSettingsToggle && advancedSettingsContent) {
-        advancedSettingsToggle.addEventListener('change', (e) => {
-            advancedSettingsContent.style.display = e.target.checked ? 'block' : 'none';
-        });
+    if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
+        // Function to toggle the advanced settings panel
+        const toggleAdvancedSettings = () => {
+            const isCollapsed = advancedSettingsContent.style.display === 'none';
+            
+            if (isCollapsed) {
+                // Expand
+                advancedSettingsContent.style.display = 'block';
+                collapseAdvancedBtn.textContent = '▲';
+            } else {
+                // Collapse
+                advancedSettingsContent.style.display = 'none';
+                collapseAdvancedBtn.textContent = '▼';
+            }
+        };
+        
+        // Add click event to both the header and the collapse button
+        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+        collapseAdvancedBtn.addEventListener('click', toggleAdvancedSettings);
     }
     
     // Curved Stem toggle
@@ -435,38 +449,4 @@ export function setupUI(visualization) {
     
     // Initialize with default color
     updateColorDisplay('#FF5733', visualization);
-    
-    if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
-        // Function to toggle the advanced settings panel
-        const toggleAdvancedSettings = () => {
-            const isCollapsed = advancedSettingsContent.style.display === 'none';
-            
-            if (isCollapsed) {
-                // Expand
-                advancedSettingsContent.style.display = 'block';
-                collapseAdvancedBtn.textContent = '▼';
-                collapseAdvancedBtn.classList.remove('collapsed');
-            } else {
-                // Collapse
-                advancedSettingsContent.style.display = 'none';
-                collapseAdvancedBtn.textContent = '◀';
-                collapseAdvancedBtn.classList.add('collapsed');
-            }
-            
-            // Save preference
-            localStorage.setItem('advancedSettingsCollapsed', !isCollapsed);
-        };
-        
-        // Add click event to the header and button
-        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-        
-        // Check saved preference
-        const savedPreference = localStorage.getItem('advancedSettingsCollapsed');
-        if (savedPreference === 'true') {
-            // Initialize as collapsed
-            advancedSettingsContent.style.display = 'none';
-            collapseAdvancedBtn.textContent = '◀';
-            collapseAdvancedBtn.classList.add('collapsed');
-        }
-    }
 }

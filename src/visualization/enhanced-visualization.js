@@ -193,9 +193,18 @@ export class EnhancedTCMVisualization {
         }
         
         // Update stem animation if it's a curved stem with shader material
-        if (this.useCurvedStem && this.centerLine && this.centerLine.material && 
-            this.centerLine.material.uniforms && this.centerLine.material.uniforms.time) {
-            this.centerLine.material.uniforms.time.value = time;
+        if (this.useCurvedStem && this.centerLine) {
+            if (this.centerLine.isGroup) {
+                // For the group-based 360-degree stem
+                this.centerLine.children.forEach(stemMesh => {
+                    if (stemMesh.material && stemMesh.material.uniforms && stemMesh.material.uniforms.time) {
+                        stemMesh.material.uniforms.time.value = time;
+                    }
+                });
+            } else if (this.centerLine.material && this.centerLine.material.uniforms && this.centerLine.material.uniforms.time) {
+                // Legacy support for single curved stem
+                this.centerLine.material.uniforms.time.value = time;
+            }
         }
         
         // Update controls
@@ -349,15 +358,33 @@ export class EnhancedTCMVisualization {
     updateStemColor(color) {
         if (!this.centerLine) return;
         
-        if (this.useCurvedStem && this.centerLine.material.uniforms && this.centerLine.material.uniforms.colors) {
-            const colors = this.centerLine.material.uniforms.colors.value;
-            
-            // Update only color-related points (middle three)
-            colors[1] = color.clone().multiplyScalar(0.3);
-            colors[2] = color.clone();
-            colors[3] = color.clone().lerp(new THREE.Color(0xffffff), 0.7);
-            
-            this.centerLine.material.uniforms.colors.value = colors;
+        if (this.useCurvedStem) {
+            // For the 360-degree curved stem (which is a group of stems)
+            if (this.centerLine.isGroup) {
+                // Update each child mesh in the group
+                this.centerLine.children.forEach(stemMesh => {
+                    if (stemMesh.material && stemMesh.material.uniforms && stemMesh.material.uniforms.colors) {
+                        const colors = stemMesh.material.uniforms.colors.value;
+                        
+                        // Update only color-related points (middle three)
+                        colors[1] = color.clone().multiplyScalar(0.3);
+                        colors[2] = color.clone();
+                        colors[3] = color.clone().lerp(new THREE.Color(0xffffff), 0.7);
+                        
+                        stemMesh.material.uniforms.colors.value = colors;
+                    }
+                });
+            } else if (this.centerLine.material && this.centerLine.material.uniforms && this.centerLine.material.uniforms.colors) {
+                // Legacy support for a single curved stem
+                const colors = this.centerLine.material.uniforms.colors.value;
+                
+                // Update only color-related points (middle three)
+                colors[1] = color.clone().multiplyScalar(0.3);
+                colors[2] = color.clone();
+                colors[3] = color.clone().lerp(new THREE.Color(0xffffff), 0.7);
+                
+                this.centerLine.material.uniforms.colors.value = colors;
+            }
         } else if (!this.useCurvedStem) {
             // For straight stem, just update the color
             this.centerLine.material.color = this.currentColor;
@@ -487,6 +514,28 @@ export class EnhancedTCMVisualization {
         });
     }
     
+    /**
+     * Updates the UI elements to display the current colors
+     */
+    updateColorUI() {
+        // Update main color display in UI
+        const mainColorDisplay = document.getElementById('currentColorDisplay');
+        if (mainColorDisplay) {
+            mainColorDisplay.style.backgroundColor = '#' + this.currentColor.getHexString();
+        }
+        
+        // Update complementary color display
+        const complementaryColorDisplay = document.getElementById('complementaryColorDisplay');
+        if (complementaryColorDisplay) {
+            const displayColor = this.useGrayLining ? this.grayLiningColor : this.complementaryColor;
+            complementaryColorDisplay.style.backgroundColor = '#' + displayColor.getHexString();
+        }
+    }
+    
+    /**
+     * Sets the main color of the visualization and updates all related elements
+     * @param {THREE.Color} color - The new color to set
+     */
     setColor(color) {
         this.currentColor = color;
         
@@ -507,7 +556,7 @@ export class EnhancedTCMVisualization {
                 this.cylinder.material.color = this.currentColor;
             }
             
-            this.innerCylinder.material.color = this.currentColor;
+            this.innerCylinder.material.color = this.complementaryColor;
             
             // Update stem colors using dedicated method
             this.updateStemColor(this.currentColor);
@@ -526,10 +575,13 @@ export class EnhancedTCMVisualization {
                 });
             }
             
-            // Update original material color for future use
-            if (this.originalCylinderMaterial) {
-                this.originalCylinderMaterial.color = this.currentColor;
-            }
+            // Update the UI color displays
+            this.updateColorUI();
+        }
+        
+        // Update original material color for future use
+        if (this.originalCylinderMaterial) {
+            this.originalCylinderMaterial.color = this.currentColor;
         }
         
         // Update gradient if enabled
@@ -541,10 +593,22 @@ export class EnhancedTCMVisualization {
     setComplementaryColor(color) {
         this.complementaryColor = color;
         
+        // Update inner cylinder if it exists
+        if (this.innerCylinder) {
+            if (this.innerCylinder.material.type === 'ShaderMaterial' && this.innerCylinder.material.uniforms.mainColor) {
+                this.innerCylinder.material.uniforms.mainColor.value = this.complementaryColor;
+            } else {
+                this.innerCylinder.material.color = this.complementaryColor;
+            }
+        }
+        
         // Update gradient if enabled
         if (this.showGradient) {
             this.updateGradient();
         }
+        
+        // Update the UI color displays
+        this.updateColorUI();
     }
     
     setRotationSpeed(speed) {
