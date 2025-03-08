@@ -126,6 +126,18 @@ export class EnhancedTCMVisualization {
         this.controls.maxPolarAngle = Math.PI * 0.85; // Limit how far you can orbit vertically
     }
     
+    /**
+     * Capture the current visualization as an image
+     * @returns {string} Data URL of the image
+     */
+    captureImage() {
+        // Make sure we render the scene before capturing
+        this.renderer.render(this.scene, this.camera);
+        
+        // Return the canvas image data as a data URL
+        return this.renderer.domElement.toDataURL('image/png');
+    }
+    
     setupLighting() {
         // Add ambient light
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);

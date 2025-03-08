@@ -548,28 +548,33 @@
             
             // Download button functionality
             downloadButton.addEventListener('click', function() {
-                // Get the visualization canvas
-                const visualizationDiv = document.getElementById('visualization');
-                const canvas = visualizationDiv.querySelector('canvas');
-                
-                if (canvas) {
-                    // Create a temporary link element
-                    const link = document.createElement('a');
-                    
-                    // Set the download attributes
-                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-                    link.download = `tcs-visualizer-${timestamp}.png`;
-                    
-                    // Convert canvas to data URL and set as href
-                    link.href = canvas.toDataURL('image/png');
-                    
-                    // Append to body, click, and remove
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                // Check if visualization is available
+                if (window.viz && typeof window.viz.captureImage === 'function') {
+                    try {
+                        // Use the viz.captureImage method to get the proper rendered image
+                        const imageDataUrl = window.viz.captureImage();
+                        
+                        // Create a temporary link element
+                        const link = document.createElement('a');
+                        
+                        // Set the download attributes
+                        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                        link.download = `tcs-visualizer-${timestamp}.png`;
+                        
+                        // Set the href to the image data
+                        link.href = imageDataUrl;
+                        
+                        // Append to body, click, and remove
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } catch (error) {
+                        console.error('Error capturing image:', error);
+                        alert('Unable to download image. Please try again later.');
+                    }
                 } else {
-                    console.error('Canvas element not found in visualization div');
-                    alert('Unable to download image. Please try again later.');
+                    console.error('Visualization not available or captureImage method not found');
+                    alert('Visualization not ready. Please try again later.');
                 }
             });
             

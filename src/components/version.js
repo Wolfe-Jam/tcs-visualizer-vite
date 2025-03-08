@@ -54,11 +54,8 @@ export function initVersionDisplay() {
     footerContainer.innerHTML = `<p style="margin: 5px 0;">TCS Visualizer v${version} | Build: ${buildDate}</p>
 <p style="margin: 5px 0;">&copy; ${currentYear} HEXTRA.io All rights reserved</p>`;
     
-    // Add the footer to the container
-    const container = document.querySelector('.container');
-    if (container) {
-        container.parentNode.insertBefore(footer, container.nextSibling);
-    }
+    // Add the footer to the end of the body for proper positioning
+    document.body.appendChild(footer);
     
     // Also update the About Box if it exists
     updateAboutBoxVersionInfo(version, buildDate, currentYear);
