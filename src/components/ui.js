@@ -278,14 +278,27 @@ export function setupUI(visualization) {
     
     // Invert Mesh Color toggle
     const invertGridColorToggle = document.getElementById('invertGridColorToggle');
+    const showMeshToggle = document.getElementById('showMeshToggle');
+    
     if (invertGridColorToggle) {
         invertGridColorToggle.addEventListener('change', (e) => {
-            visualization.toggleMeshColorInversion(e.target.checked);
+            const isInverted = e.target.checked;
+            
+            // Automatically enable mesh when inverted
+            if (isInverted && showMeshToggle) {
+                // Update the checkbox UI
+                showMeshToggle.checked = true;
+                
+                // Enable mesh in the visualization
+                visualization.toggleMesh(true);
+            }
+            
+            // Apply the inversion
+            visualization.toggleMeshColorInversion(isInverted);
         });
     }
     
     // Show Mesh toggle
-    const showMeshToggle = document.getElementById('showMeshToggle');
     if (showMeshToggle) {
         showMeshToggle.addEventListener('change', (e) => {
             visualization.toggleMesh(e.target.checked);
