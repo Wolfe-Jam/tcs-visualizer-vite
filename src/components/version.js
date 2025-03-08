@@ -35,6 +35,12 @@ export function initVersionDisplay() {
     const buildDate = getBuildDate();
     const currentYear = new Date().getFullYear();
     
+    // Update the banner version info if it exists
+    const bannerVersionInfo = document.getElementById('banner-version-info');
+    if (bannerVersionInfo) {
+        bannerVersionInfo.textContent = `v${version}`;
+    }
+    
     // Look for the footer-version-info element in our new footer structure
     const footerVersionInfo = document.getElementById('footer-version-info');
     

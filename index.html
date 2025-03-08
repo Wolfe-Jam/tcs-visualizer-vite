@@ -267,10 +267,32 @@
             align-items: center;
         }
         
+        .banner-title-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
         .banner-title {
             margin: 0;
             font-size: 1.2rem;
             font-weight: 600;
+        }
+        
+        .banner-subtitle {
+            font-size: 0.8rem;
+            margin-top: 3px;
+            opacity: 0.9;
+        }
+        
+        .banner-subtitle a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .banner-subtitle a:hover {
+            color: #ffffff;
+            text-decoration: underline;
         }
         
         .banner-links a {
@@ -329,10 +351,14 @@
     <!-- Page Banner -->
     <div class="page-banner">
       <div class="banner-content">
-        <h1 class="banner-title">Textile Color System Visualizer</h1>
+        <div class="banner-title-section">
+          <h1 class="banner-title">Textile Color System Visualizer</h1>
+          <div class="banner-subtitle">
+            <a href="#" id="bannerAboutLink">About</a> | <span id="banner-version-info">v1.0.0</span>
+          </div>
+        </div>
         <div class="banner-links">
           <a href="#" id="bannerDownloadLink"><i class="fas fa-download" style="margin-right: 5px;"></i>Download</a>
-          <a href="#" id="bannerAboutLink">About</a>
           <a href="https://hextra.io" target="_blank">HEXTRA.io</a>
           <a href="#" id="bannerThemeToggle">Toggle Theme</a>
         </div>
@@ -345,7 +371,6 @@
                 <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
                     <i class="fas fa-download" style="margin-right: 5px;"></i>Download
                 </button>
-                <button id="aboutButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">About</button>
             </div>
         </div>
         <div class="visualization-container">
