@@ -1277,7 +1277,7 @@ export class EnhancedTCMVisualization {
         notification.style.top = '20px';
         notification.style.left = '50%';
         notification.style.transform = 'translateX(-50%)';
-        notification.style.backgroundColor = 'rgba(0, 150, 0, 0.8)';
+        notification.style.backgroundColor = '#186D6D'; // Updated to requested color
         notification.style.color = 'white';
         notification.style.padding = '10px 20px';
         notification.style.borderRadius = '4px';
@@ -1367,7 +1367,7 @@ export class EnhancedTCMVisualization {
         notification.style.top = '20px';
         notification.style.left = '50%';
         notification.style.transform = 'translateX(-50%)';
-        notification.style.backgroundColor = 'rgba(0, 150, 0, 0.8)';
+        notification.style.backgroundColor = '#186D6D'; // Updated to requested color
         notification.style.color = 'white';
         notification.style.padding = '10px 20px';
         notification.style.borderRadius = '4px';
