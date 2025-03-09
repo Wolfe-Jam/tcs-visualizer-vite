@@ -169,7 +169,7 @@
                 text-align: center;
             }
             
-            /* Advanced Settings styling */
+            /* Base Advanced Settings styling */
             #advancedSettingsContent {
                 border-left: 2px solid var(--selector-border);
                 width: 100%;
@@ -177,13 +177,22 @@
                 box-sizing: border-box;
                 overflow-y: auto;
                 max-height: 300px;
-                display: none; /* Hidden by default */
             }
             
-            /* Hide Advanced Settings section entirely on mobile */
+            /* Mobile behavior */
             @media (max-width: 768px) {
-                #advancedSettingsSection {
-                    display: none; /* Hide completely on mobile */
+                /* On mobile, set a fixed width and always show content */
+                .control-group {
+                    width: 407px !important; /* Fixed width on mobile */
+                    margin: 0 auto; /* Center the box */
+                }
+                
+                #advancedSettingsHeader button {
+                    display: none; /* Hide dropdown button on mobile */
+                }
+                
+                #advancedSettingsContent {
+                    display: block !important; /* Always show on mobile */
                 }
             }
             
@@ -191,6 +200,10 @@
             @media (min-width: 769px) {
                 #advancedSettingsHeader {
                     cursor: pointer;
+                }
+                
+                #advancedSettingsContent {
+                    display: none; /* Hidden by default on desktop */
                 }
             }
             
@@ -666,7 +679,7 @@
                     </div>
                     
                     <!-- Dropdown content - will be toggled by JS -->
-                    <div id="advancedSettingsContent">
+                    <div id="advancedSettingsContent" style="width: 100%; padding: 10px; box-sizing: border-box;">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
