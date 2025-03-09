@@ -376,12 +376,15 @@ export function setupUI(visualization) {
         });
     }
     
-    // Advanced Settings toggle with the collapse button (desktop only)
+    // Advanced Settings toggle with the collapse button
     const advancedSettingsContent = document.getElementById('advancedSettingsContent');
     const advancedSettingsHeader = document.getElementById('advancedSettingsHeader');
     const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
+        // Check if we're on mobile or desktop
+        const isMobile = window.innerWidth <= 768;
+        
         // Simple toggle function for the dropdown
         const toggleAdvancedSettings = (e) => {
             if (e) e.preventDefault(); // Prevent default behavior
@@ -398,16 +401,21 @@ export function setupUI(visualization) {
             }
         };
         
-        // Add click event listeners
-        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-        collapseAdvancedBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent event bubbling
-            toggleAdvancedSettings(e);
-        });
-        
-        // Default state is collapsed
-        advancedSettingsContent.style.display = 'none';
-        collapseAdvancedBtn.textContent = '▼';
+        if (isMobile) {
+            // On mobile: always show content
+            advancedSettingsContent.style.display = 'block';
+        } else {
+            // Desktop behavior with dropdown
+            advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+            collapseAdvancedBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                toggleAdvancedSettings(e);
+            });
+            
+            // Default state is collapsed on desktop
+            advancedSettingsContent.style.display = 'none';
+            collapseAdvancedBtn.textContent = '▼';
+        }
     }
     
     // Curved Stem toggle

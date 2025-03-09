@@ -74,13 +74,13 @@
             width: 100%;
             height: 100%;
         }
-        /* Controls with strict fixed width */
+        /* Mobile-first approach (default is single column) */
         .controls {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
             gap: 20px;
             margin-bottom: 20px;
+            width: 100%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -91,14 +91,25 @@
             box-shadow: 0 2px 4px var(--shadow-color);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
-            width: 407px !important;
-            min-width: 407px !important;
-            max-width: 407px !important;
-            flex: 0 0 407px !important;
+            width: 100%;
             box-sizing: border-box;
+            flex-shrink: 0;
         }
         
-        /* Mobile adjustments */
+        /* Fixed two-column layout for desktop */
+        @media (min-width: 769px) {
+            .controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .control-group {
+                width: 410px; /* Fixed width */
+                max-width: calc(50% - 10px); /* But don't exceed half container minus spacing */
+            }
+        }
+        
+        /* Additional mobile adjustments */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -108,40 +119,35 @@
             }
             .controls {
                 gap: 15px;
-                flex-direction: column;
+                align-items: center; /* Center items vertically */
             }
             .control-group {
-                width: 407px !important;
-                min-width: 320px !important;
-                max-width: 407px !important;
-                margin: 0 auto;
                 padding: 12px;
-                text-align: center;
+                width: 407px !important; /* Fixed width on mobile */
+                margin-left: auto;
+                margin-right: auto;
+                box-sizing: border-box; /* Include padding in width calculation */
+                max-width: 100%; /* Don't overflow viewport */
+            }
+            /* Fix input widths to prevent stretching */
+            input[type="range"], input[type="color"] {
+                width: 100%;
+                max-width: 383px; /* 407px - 24px (padding) */
             }
             
-            /* Center all content within control groups */
-            .control-group h2,
-            .control-group p,
-            .control-group div,
-            .color-swatches-container {
-                text-align: center;
-                justify-content: center;
+            #advancedSettingsContent input[type="range"],
+            #advancedSettingsContent .toggle-container {
+                width: 100%;
+                max-width: 355px; /* Account for left padding */
             }
             
-            /* Fix header and reset button layout on mobile */
-            .control-group > div:first-child {
-                flex-direction: column;
-                gap: 10px;
+            /* Hide dropdown button on mobile */
+            #collapseAdvanced {
+                display: none;
             }
             
-            .control-group .reset-button {
-                margin: 0 auto;
-            }
-            
-            /* Center toggle containers */
-            .toggle-container {
-                justify-content: center;
-                margin: 0 auto;
+            #advancedSettingsHeader {
+                cursor: default; /* Remove pointer cursor on mobile */
             }
             /* Adjust font sizes for mobile */
             h1 {
@@ -149,78 +155,6 @@
             }
             h2 {
                 font-size: 1.1rem;
-            }
-            /* Center banner content on mobile */
-            .banner-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            .banner-links {
-                margin-top: 5px;
-            }
-            /* Center footer content on mobile */
-            #aboutModal div {
-                text-align: center;
-            }
-            
-            /* Center page footer on mobile */
-            .footer-content {
-                text-align: center;
-            }
-            
-            /* Base Advanced Settings styling */
-            #advancedSettingsContent {
-                border-left: 2px solid var(--selector-border);
-                width: 100%;
-                padding: 10px;
-                box-sizing: border-box;
-                overflow-y: auto;
-                max-height: 300px;
-            }
-            
-            /* Mobile behavior */
-            @media (max-width: 768px) {
-                /* On mobile, set a fixed width and always show content */
-                .control-group {
-                    width: 407px !important; /* Fixed width on mobile */
-                    margin: 0 auto; /* Center the box */
-                }
-                
-                #advancedSettingsHeader button {
-                    display: none; /* Hide dropdown button on mobile */
-                }
-                
-                #advancedSettingsContent {
-                    display: block !important; /* Always show on mobile */
-                }
-            }
-            
-            /* Desktop behavior */
-            @media (min-width: 769px) {
-                #advancedSettingsHeader {
-                    cursor: pointer;
-                }
-                
-                #advancedSettingsContent {
-                    display: none; /* Hidden by default on desktop */
-                }
-            }
-            
-            #advancedSettingsContent span {
-                font-size: 14px;
-            }
-            
-            #advancedSettingsContent .toggle-container {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-            
-            #stemOffsetControls,
-            #stemSegmentsSlider,
-            #advancedSettingsContent input[type="range"] {
-                width: 100%;
-                max-width: 100%;
             }
             /* Make color swatches stack on very small screens */
             @media (max-width: 480px) {
@@ -672,14 +606,13 @@
                 </div>
                 
                 <!-- Advanced Settings Section -->
-                <div id="advancedSettingsSection" style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
-                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
+                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;">
                         <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
                     </div>
                     
-                    <!-- Dropdown content - will be toggled by JS -->
-                    <div id="advancedSettingsContent" style="width: 100%; padding: 10px; box-sizing: border-box;">
+                    <div id="advancedSettingsContent" style="display: block; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 375px; box-sizing: border-box;">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
@@ -687,7 +620,7 @@
                                     <input type="checkbox" id="curvedStemToggle" checked>
                                     <span class="slider"></span>
                                 </label>
-                                <span>Curved Stem</span>
+                                <span>Show Curved Stem (3 o'clock)</span>
                             </div>
                             
                             <!-- Multiple Stem Segments Toggle -->
@@ -696,7 +629,7 @@
                                     <input type="checkbox" id="showMultipleStemsToggle">
                                     <span class="slider"></span>
                                 </label>
-                                <span>Multiple Segments</span>
+                                <span>Show Multiple Stem Segments</span>
                             </div>
                             
                             <!-- Stem Curvature Control -->
