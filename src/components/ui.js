@@ -382,52 +382,62 @@ export function setupUI(visualization) {
     const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
+        // Check if we're on desktop (window width > 768px)
+        const isDesktop = () => window.innerWidth >= 769;
+        
         // Function to toggle the advanced settings panel
         const toggleAdvancedSettings = (e) => {
+            // Only apply toggle functionality on desktop
+            if (!isDesktop()) return;
+            
             // Prevent default behavior
             if (e) e.preventDefault();
             
-            // Get current state
-            const isCollapsed = advancedSettingsContent.style.display === 'none';
+            // Toggle the expanded class
+            const isExpanded = advancedSettingsContent.classList.contains('expanded');
             
-            if (isCollapsed) {
+            if (!isExpanded) {
                 // Expand
-                advancedSettingsContent.style.display = 'block';
+                advancedSettingsContent.classList.add('expanded');
                 collapseAdvancedBtn.textContent = '▲'; // Up arrow
                 console.log('Advanced settings expanded');
             } else {
                 // Collapse
-                advancedSettingsContent.style.display = 'none';
+                advancedSettingsContent.classList.remove('expanded');
                 collapseAdvancedBtn.textContent = '▼'; // Down arrow
                 console.log('Advanced settings collapsed');
             }
-            
-            // Force a layout recalculation to ensure changes take effect
-            window.getComputedStyle(advancedSettingsContent).display;
         };
         
-        // Initial collapse state (start collapsed)
-        advancedSettingsContent.style.display = 'none';
-        collapseAdvancedBtn.textContent = '▼';
+        // Initialize state based on desktop/mobile
+        if (isDesktop()) {
+            // Desktop starts collapsed
+            collapseAdvancedBtn.textContent = '▼';
+        }
         
-        // Add click event for the header (including the collapse button)
-        // Use touchstart and click for better mobile support
-        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-        advancedSettingsHeader.addEventListener('touchend', (e) => {
-            e.preventDefault(); // Prevent double events
-            toggleAdvancedSettings();
-        });
+        // Add click event for the header on desktop only
+        if (isDesktop()) {
+            // Desktop click events
+            advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+            
+            // Button click event to prevent bubbling
+            collapseAdvancedBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleAdvancedSettings(e);
+            });
+        }
         
-        // Add separate click event for just the collapse button 
-        // to prevent event bubbling
-        collapseAdvancedBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleAdvancedSettings(e);
-        });
-        collapseAdvancedBtn.addEventListener('touchend', (e) => {
-            e.stopPropagation();
-            e.preventDefault(); // Prevent double events
-            toggleAdvancedSettings();
+        // Listen for resize events to handle desktop/mobile transitions
+        window.addEventListener('resize', () => {
+            if (isDesktop()) {
+                // Switching to desktop
+                advancedSettingsHeader.style.cursor = 'pointer';
+                collapseAdvancedBtn.style.display = 'block';
+            } else {
+                // Switching to mobile
+                advancedSettingsHeader.style.cursor = 'default';
+                collapseAdvancedBtn.style.display = 'none';
+            }
         });
     }
     

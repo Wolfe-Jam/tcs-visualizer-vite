@@ -170,23 +170,39 @@
             }
             
             /* Advanced Settings mobile improvements */
-            /* Create positioning context for the control group */
-            .control-group:nth-child(2) { /* Target visualization controls group */
-                position: relative;
-                margin-bottom: 300px; /* Space for expanded dropdown */
-                z-index: 1; /* Create stacking context */
+            /* On mobile, always show advanced settings (no dropdown) */
+            #advancedSettingsHeader button {
+                display: none; /* Hide the dropdown button on mobile */
             }
             
-            /* Style the advanced settings container for mobile */
             #advancedSettingsContent {
+                display: block !important; /* Always show content on mobile */
+                border-left: 2px solid var(--selector-border);
                 width: 100%;
-                left: 0;
                 padding: 10px;
                 box-sizing: border-box;
-                border: 1px solid var(--selector-border);
-                border-radius: 4px;
-                margin-top: 5px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                margin-top: 10px;
+                overflow: visible;
+                max-height: none;
+            }
+            
+            /* Desktop specific styling */
+            @media (min-width: 769px) {
+                #advancedSettingsHeader {
+                    cursor: pointer;
+                }
+                
+                #advancedSettingsHeader button {
+                    display: block; /* Show button on desktop */
+                }
+                
+                #advancedSettingsContent {
+                    display: none !important; /* Hidden by default on desktop */
+                }
+                
+                #advancedSettingsContent.expanded {
+                    display: block !important; /* Show when expanded class is added */
+                }
             }
             
             #advancedSettingsContent span {
@@ -654,13 +670,13 @@
                 </div>
                 
                 <!-- Advanced Settings Section -->
-                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px; position: relative;">
-                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;">
+                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
+                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
                     </div>
                     
-                    <div id="advancedSettingsContent" style="display: none; border-left: 2px solid var(--selector-border); padding: 10px; padding-bottom: 15px; max-width: 100%; background: var(--container-bg); width: 100%; box-sizing: border-box; max-height: 300px; overflow-y: auto;">
+                    <div id="advancedSettingsContent" style="border-left: 2px solid var(--selector-border); padding: 10px; padding-bottom: 15px; width: 100%; box-sizing: border-box;">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
