@@ -74,10 +74,10 @@
             width: 100%;
             height: 100%;
         }
+        /* Mobile-first approach (default is single column) */
         .controls {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 20px;
             margin-bottom: 20px;
             width: 100%;
@@ -91,13 +91,25 @@
             box-shadow: 0 2px 4px var(--shadow-color);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
-            width: calc(50% - 10px); /* Fixed width for desktop: 50% minus half the gap */
+            width: 100%;
             box-sizing: border-box;
             flex-shrink: 0;
-            max-width: 410px; /* Limit maximum width to prevent excessive stretching */
         }
         
-        /* Responsive layout for mobile devices */
+        /* Fixed two-column layout for desktop */
+        @media (min-width: 769px) {
+            .controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .control-group {
+                width: 410px; /* Fixed width */
+                max-width: calc(50% - 10px); /* But don't exceed half container minus spacing */
+            }
+        }
+        
+        /* Additional mobile adjustments */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -109,7 +121,6 @@
                 gap: 15px;
             }
             .control-group {
-                width: 100%; /* Full width on mobile */
                 padding: 12px;
             }
             /* Adjust font sizes for mobile */
