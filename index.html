@@ -165,6 +165,31 @@
                 position: relative;
             }
             
+            /* Fix banner layout on mobile */
+            .page-banner {
+                padding: 15px 10px; /* Add horizontal padding */
+            }
+            
+            .banner-content {
+                flex-direction: column;
+                text-align: center;
+                padding: 0;
+            }
+            
+            .banner-links {
+                margin-top: 10px;
+            }
+            
+            .banner-links a {
+                margin: 0 10px;
+            }
+            
+            /* Fix visualization container */
+            .visualization-container {
+                width: 100% !important;
+                margin: 0 auto;
+            }
+            
             /* Fix advanced settings content alignment */
             #advancedSettingsContent {
                 border-left: none !important; /* Remove left border on mobile */
@@ -172,6 +197,14 @@
                 margin: 0 auto !important; /* Center content */
                 position: relative;
                 left: 0 !important;
+            }
+            
+            /* Fix container width and ensure it's centered */
+            .container {
+                width: 100% !important;
+                box-sizing: border-box;
+                margin: 0 auto;
+                padding: 10px;
             }
             /* Adjust font sizes for mobile */
             h1 {
