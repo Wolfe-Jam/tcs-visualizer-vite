@@ -170,6 +170,25 @@
             }
             
             /* Advanced Settings mobile improvements */
+            /* Create positioning context for the control group */
+            .control-group:nth-child(2) { /* Target visualization controls group */
+                position: relative;
+                margin-bottom: 380px; /* Space for expanded dropdown */
+                z-index: 1; /* Create stacking context */
+            }
+            
+            /* Style the advanced settings container for mobile */
+            #advancedSettingsContent {
+                width: 100%;
+                left: 0;
+                padding: 10px;
+                box-sizing: border-box;
+                border: 1px solid var(--selector-border);
+                border-radius: 4px;
+                margin-top: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            
             #advancedSettingsContent span {
                 font-size: 14px;
             }
@@ -635,34 +654,13 @@
                 </div>
                 
                 <!-- Advanced Settings Section -->
-                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
-                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;" onclick="toggleAdvancedSettings()" ontouchend="toggleAdvancedSettings(event)">
+                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px; position: relative;">
+                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;">
                         <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
-                        <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;" onclick="toggleAdvancedSettings(event); event.stopPropagation();" ontouchend="toggleAdvancedSettings(event); event.stopPropagation(); event.preventDefault();">▼</button>
+                        <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
                     </div>
                     
-                    <div id="advancedSettingsContent" style="display: none; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 100%; overflow-x: hidden;">
-                    
-                    <script>
-                    // Inline dropdown functionality for better mobile support
-                    function toggleAdvancedSettings(e) {
-                        if (e) e.preventDefault();
-                        const content = document.getElementById('advancedSettingsContent');
-                        const button = document.getElementById('collapseAdvanced');
-                        
-                        if (!content || !button) return;
-                        
-                        const isCollapsed = content.style.display === 'none';
-                        
-                        content.style.display = isCollapsed ? 'block' : 'none';
-                        button.textContent = isCollapsed ? '▲' : '▼';
-                        
-                        // Force a layout recalculation
-                        window.getComputedStyle(content).display;
-                        
-                        console.log('Advanced settings ' + (isCollapsed ? 'expanded' : 'collapsed'));
-                    }
-                    </script>
+                    <div id="advancedSettingsContent" style="display: none; border-left: 2px solid var(--selector-border); padding: 10px; max-width: 100%; background: var(--container-bg); width: 100%; box-sizing: border-box; height: 380px; overflow-y: auto;">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
