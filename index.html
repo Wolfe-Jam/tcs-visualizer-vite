@@ -168,6 +168,23 @@
             .footer-content {
                 text-align: center;
             }
+            
+            /* Advanced Settings mobile improvements */
+            #advancedSettingsContent span {
+                font-size: 14px;
+            }
+            
+            #advancedSettingsContent .toggle-container {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
+            #stemOffsetControls,
+            #stemSegmentsSlider,
+            #advancedSettingsContent input[type="range"] {
+                width: 100%;
+                max-width: 100%;
+            }
             /* Make color swatches stack on very small screens */
             @media (max-width: 480px) {
                 .color-swatches-container {
@@ -624,7 +641,7 @@
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
                     </div>
                     
-                    <div id="advancedSettingsContent" style="display: block; border-left: 2px solid var(--selector-border); padding-left: 10px;">
+                    <div id="advancedSettingsContent" style="display: block; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 100%; overflow-x: hidden;">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
@@ -632,7 +649,7 @@
                                     <input type="checkbox" id="curvedStemToggle" checked>
                                     <span class="slider"></span>
                                 </label>
-                                <span>Show Curved Stem (3 o'clock)</span>
+                                <span>Curved Stem</span>
                             </div>
                             
                             <!-- Multiple Stem Segments Toggle -->
@@ -641,7 +658,7 @@
                                     <input type="checkbox" id="showMultipleStemsToggle">
                                     <span class="slider"></span>
                                 </label>
-                                <span>Show Multiple Stem Segments</span>
+                                <span>Multiple Segments</span>
                             </div>
                             
                             <!-- Stem Curvature Control -->
