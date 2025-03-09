@@ -113,6 +113,8 @@
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
+                margin: 0 auto;
+                text-align: center;
             }
             .visualization-container {
                 height: 400px; /* Slightly smaller on mobile */
@@ -128,6 +130,8 @@
                 margin-right: auto;
                 box-sizing: border-box; /* Include padding in width calculation */
                 max-width: 100%; /* Don't overflow viewport */
+                position: relative;
+                left: 0; /* Prevent left offset */
             }
             /* Fix input widths to prevent stretching */
             input[type="range"], input[type="color"] {
@@ -139,6 +143,8 @@
             #advancedSettingsContent .toggle-container {
                 width: 100%;
                 max-width: 355px; /* Account for left padding */
+                position: relative;
+                left: 0;
             }
             
             /* Hide dropdown button on mobile */
@@ -148,6 +154,24 @@
             
             #advancedSettingsHeader {
                 cursor: default; /* Remove pointer cursor on mobile */
+            }
+            
+            /* Center header, footer, and banner on mobile */
+            #page-header, #page-footer, .page-footer, .footer-content, #header-banner {
+                text-align: center;
+                width: 100%;
+                justify-content: center;
+                left: 0;
+                position: relative;
+            }
+            
+            /* Fix advanced settings content alignment */
+            #advancedSettingsContent {
+                border-left: none !important; /* Remove left border on mobile */
+                padding-left: 0 !important; /* Remove left padding on mobile */
+                margin: 0 auto !important; /* Center content */
+                position: relative;
+                left: 0 !important;
             }
             /* Adjust font sizes for mobile */
             h1 {
@@ -612,7 +636,7 @@
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
                     </div>
                     
-                    <div id="advancedSettingsContent" style="display: block; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 375px; box-sizing: border-box;">
+                    <div id="advancedSettingsContent" style="display: block; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 375px; box-sizing: border-box; margin: 0 auto;">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
