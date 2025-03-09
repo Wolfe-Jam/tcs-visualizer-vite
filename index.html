@@ -116,6 +116,32 @@
                 max-width: 407px !important;
                 margin: 0 auto;
                 padding: 12px;
+                text-align: center;
+            }
+            
+            /* Center all content within control groups */
+            .control-group h2,
+            .control-group p,
+            .control-group div,
+            .color-swatches-container {
+                text-align: center;
+                justify-content: center;
+            }
+            
+            /* Fix header and reset button layout on mobile */
+            .control-group > div:first-child {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .control-group .reset-button {
+                margin: 0 auto;
+            }
+            
+            /* Center toggle containers */
+            .toggle-container {
+                justify-content: center;
+                margin: 0 auto;
             }
             /* Adjust font sizes for mobile */
             h1 {
