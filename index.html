@@ -55,7 +55,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 1200px;
+            max-width: 850px;
             margin: 0 auto;
             padding: 20px;
             flex: 1;
@@ -248,7 +248,7 @@
         /* Banner Styles */
         .page-banner {
             background-color: #003847;
-            color: #ffffff;
+            color: #ffffff !important; /* Force white text in both themes */
             padding: 15px 0;
             width: 100%;
             box-sizing: border-box;
@@ -259,12 +259,13 @@
         }
         
         .banner-content {
-            max-width: 1200px;
+            max-width: 850px; /* Match the app content max-width */
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
         
         .banner-title-section {
@@ -276,27 +277,29 @@
             margin: 0;
             font-size: 1.2rem;
             font-weight: 600;
+            color: #ffffff !important; /* Force white text in both themes */
         }
         
         .banner-subtitle {
             font-size: 0.8rem;
             margin-top: 3px;
             opacity: 0.9;
+            color: #ffffff !important; /* Force white text in both themes */
         }
         
         .banner-subtitle a {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.9) !important; /* Force white text in both themes */
             text-decoration: none;
             transition: color 0.2s;
         }
         
         .banner-subtitle a:hover {
-            color: #ffffff;
+            color: #ffffff !important; /* Force white text in both themes */
             text-decoration: underline;
         }
         
         .banner-links a {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.9) !important; /* Force white text in both themes */
             text-decoration: none;
             margin-left: 20px;
             font-size: 0.9rem;
@@ -304,7 +307,7 @@
         }
         
         .banner-links a:hover {
-            color: #ffffff;
+            color: #ffffff !important; /* Force white text in both themes */
             text-decoration: underline;
             opacity: 1;
         }
@@ -358,9 +361,7 @@
           </div>
         </div>
         <div class="banner-links">
-          <a href="#" id="bannerDownloadLink"><i class="fas fa-download" style="margin-right: 5px;"></i>Download</a>
           <a href="https://hextra.io" target="_blank">HEXTRA.io</a>
-          <a href="#" id="bannerThemeToggle">Toggle Theme</a>
         </div>
       </div>
     </div>
