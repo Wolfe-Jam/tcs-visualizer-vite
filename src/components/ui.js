@@ -376,13 +376,13 @@ export function setupUI(visualization) {
         });
     }
     
-    // Advanced Settings toggle with the collapse button
+    // Advanced Settings toggle with the collapse button (desktop only)
     const advancedSettingsContent = document.getElementById('advancedSettingsContent');
     const advancedSettingsHeader = document.getElementById('advancedSettingsHeader');
     const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
-        // Simple toggle function for desktop
+        // Simple toggle function for the dropdown
         const toggleAdvancedSettings = (e) => {
             if (e) e.preventDefault(); // Prevent default behavior
             
@@ -391,26 +391,23 @@ export function setupUI(visualization) {
                 // Hide it
                 advancedSettingsContent.style.display = 'none';
                 collapseAdvancedBtn.textContent = '▼'; // Down arrow
-                console.log('Advanced settings collapsed');
             } else {
                 // Show it
                 advancedSettingsContent.style.display = 'block';
                 collapseAdvancedBtn.textContent = '▲'; // Up arrow
-                console.log('Advanced settings expanded');
             }
         };
         
-        // For desktop only
-        if (window.innerWidth >= 769) {
-            // Add click event listeners
-            advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-            collapseAdvancedBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleAdvancedSettings(e);
-            });
-        }
+        // Add click event listeners
+        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+        collapseAdvancedBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            toggleAdvancedSettings(e);
+        });
         
-        console.log('Advanced settings initialized');
+        // Default state is collapsed
+        advancedSettingsContent.style.display = 'none';
+        collapseAdvancedBtn.textContent = '▼';
     }
     
     // Curved Stem toggle

@@ -169,7 +169,7 @@
                 text-align: center;
             }
             
-            /* Mobile-first CSS for Advanced Settings */
+            /* Advanced Settings styling */
             #advancedSettingsContent {
                 border-left: 2px solid var(--selector-border);
                 width: 100%;
@@ -177,28 +177,20 @@
                 box-sizing: border-box;
                 overflow-y: auto;
                 max-height: 300px;
-                /* Mobile: Always visible */
-                display: block; 
+                display: none; /* Hidden by default */
             }
             
-            /* Hide dropdown button on mobile */
-            #advancedSettingsHeader button {
-                display: none;
+            /* Hide Advanced Settings section entirely on mobile */
+            @media (max-width: 768px) {
+                #advancedSettingsSection {
+                    display: none; /* Hide completely on mobile */
+                }
             }
             
-            /* Desktop behavior (>= 769px) */
+            /* Desktop behavior */
             @media (min-width: 769px) {
                 #advancedSettingsHeader {
                     cursor: pointer;
-                }
-                
-                #advancedSettingsHeader button {
-                    display: block; /* Show button on desktop */
-                }
-                
-                /* Hide content by default on desktop */
-                #advancedSettingsContent {
-                    display: none;
                 }
             }
             
@@ -667,7 +659,7 @@
                 </div>
                 
                 <!-- Advanced Settings Section -->
-                <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
+                <div id="advancedSettingsSection" style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
                     <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
