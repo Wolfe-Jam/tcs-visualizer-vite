@@ -383,18 +383,27 @@ export function setupUI(visualization) {
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
         // Function to toggle the advanced settings panel
-        const toggleAdvancedSettings = () => {
+        const toggleAdvancedSettings = (e) => {
+            // Prevent default behavior
+            if (e) e.preventDefault();
+            
+            // Get current state
             const isCollapsed = advancedSettingsContent.style.display === 'none';
             
             if (isCollapsed) {
                 // Expand
                 advancedSettingsContent.style.display = 'block';
                 collapseAdvancedBtn.textContent = '▲'; // Up arrow
+                console.log('Advanced settings expanded');
             } else {
                 // Collapse
                 advancedSettingsContent.style.display = 'none';
                 collapseAdvancedBtn.textContent = '▼'; // Down arrow
+                console.log('Advanced settings collapsed');
             }
+            
+            // Force a layout recalculation to ensure changes take effect
+            window.getComputedStyle(advancedSettingsContent).display;
         };
         
         // Initial collapse state (start collapsed)
@@ -402,12 +411,22 @@ export function setupUI(visualization) {
         collapseAdvancedBtn.textContent = '▼';
         
         // Add click event for the header (including the collapse button)
+        // Use touchstart and click for better mobile support
         advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+        advancedSettingsHeader.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent double events
+            toggleAdvancedSettings();
+        });
         
         // Add separate click event for just the collapse button 
         // to prevent event bubbling
         collapseAdvancedBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            toggleAdvancedSettings(e);
+        });
+        collapseAdvancedBtn.addEventListener('touchend', (e) => {
+            e.stopPropagation();
+            e.preventDefault(); // Prevent double events
             toggleAdvancedSettings();
         });
     }

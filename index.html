@@ -636,12 +636,33 @@
                 
                 <!-- Advanced Settings Section -->
                 <div style="border-top: 1px solid var(--selector-border); padding-top: 15px; margin-bottom: 15px;">
-                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;">
+                    <div id="advancedSettingsHeader" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer;" onclick="toggleAdvancedSettings()" ontouchend="toggleAdvancedSettings(event)">
                         <h3 style="margin: 0; font-size: 1rem;">Advanced Settings</h3>
-                        <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
+                        <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;" onclick="toggleAdvancedSettings(event); event.stopPropagation();" ontouchend="toggleAdvancedSettings(event); event.stopPropagation(); event.preventDefault();">▼</button>
                     </div>
                     
-                    <div id="advancedSettingsContent" style="display: block; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 100%; overflow-x: hidden;">
+                    <div id="advancedSettingsContent" style="display: none; border-left: 2px solid var(--selector-border); padding-left: 10px; max-width: 100%; overflow-x: hidden;">
+                    
+                    <script>
+                    // Inline dropdown functionality for better mobile support
+                    function toggleAdvancedSettings(e) {
+                        if (e) e.preventDefault();
+                        const content = document.getElementById('advancedSettingsContent');
+                        const button = document.getElementById('collapseAdvanced');
+                        
+                        if (!content || !button) return;
+                        
+                        const isCollapsed = content.style.display === 'none';
+                        
+                        content.style.display = isCollapsed ? 'block' : 'none';
+                        button.textContent = isCollapsed ? '▲' : '▼';
+                        
+                        // Force a layout recalculation
+                        window.getComputedStyle(content).display;
+                        
+                        console.log('Advanced settings ' + (isCollapsed ? 'expanded' : 'collapsed'));
+                    }
+                    </script>
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">
