@@ -382,10 +382,7 @@ export function setupUI(visualization) {
     const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
-        // Check if we're on mobile or desktop
-        const isMobile = window.innerWidth <= 768;
-        
-        // Simple toggle function for the dropdown
+        // Simple toggle function for the dropdown (used on both mobile and desktop)
         const toggleAdvancedSettings = (e) => {
             if (e) e.preventDefault(); // Prevent default behavior
             
@@ -401,21 +398,21 @@ export function setupUI(visualization) {
             }
         };
         
-        if (isMobile) {
-            // On mobile: always show content
-            advancedSettingsContent.style.display = 'block';
-        } else {
-            // Desktop behavior with dropdown
-            advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-            collapseAdvancedBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent event bubbling
-                toggleAdvancedSettings(e);
-            });
-            
-            // Default state is collapsed on desktop
-            advancedSettingsContent.style.display = 'none';
-            collapseAdvancedBtn.textContent = '▼';
-        }
+        // Add click handlers for both mobile and desktop
+        advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
+        collapseAdvancedBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            toggleAdvancedSettings(e);
+        });
+        
+        // Default state for both mobile and desktop is expanded
+        advancedSettingsContent.style.display = 'block';
+        collapseAdvancedBtn.textContent = '▲'; // Up arrow
+        
+        // Add resize listener to maintain consistent UI state
+        window.addEventListener('resize', () => {
+            // No special behavior needed for resize as all devices now have the same behavior
+        });
     }
     
     // Curved Stem toggle
