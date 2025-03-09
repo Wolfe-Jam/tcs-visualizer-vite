@@ -75,8 +75,8 @@
             height: 100%;
         }
         .controls {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2-column layout for desktop */
             gap: 20px;
             margin-bottom: 20px;
             width: 100%;
@@ -91,7 +91,6 @@
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
             width: 100%;
-            max-width: 100%;
             box-sizing: border-box;
         }
         
@@ -104,6 +103,7 @@
                 height: 400px; /* Slightly smaller on mobile */
             }
             .controls {
+                grid-template-columns: 1fr; /* Switch to single column on mobile */
                 gap: 15px;
             }
             .control-group {
