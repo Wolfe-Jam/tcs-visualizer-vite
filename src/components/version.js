@@ -48,7 +48,7 @@ export function initVersionDisplay() {
         // If the new footer structure exists, update it
         footerVersionInfo.innerHTML = `
             <p style="margin: 5px 0;">TCS Visualizer v${version} | Build: ${buildDate}</p>
-            <p style="margin: 5px 0;">&copy; ${currentYear} HEXTRA.io All rights reserved</p>
+            <p style="margin: 5px 0;">&copy; ${currentYear} <a href="https://hextra.io" target="_blank" style="color: var(--selector-active-bg); text-decoration: none;">HEXTRA.io</a> All rights reserved</p>
         `;
     } else {
         // Fallback to the old method if the new footer isn't found
@@ -71,7 +71,7 @@ export function initVersionDisplay() {
         footer.appendChild(footerContainer);
         
         footerContainer.innerHTML = `<p style="margin: 5px 0;">TCS Visualizer v${version} | Build: ${buildDate}</p>
-<p style="margin: 5px 0;">&copy; ${currentYear} HEXTRA.io All rights reserved</p>`;
+<p style="margin: 5px 0;">&copy; ${currentYear} <a href="https://hextra.io" target="_blank" style="color: var(--selector-active-bg); text-decoration: none;">HEXTRA.io</a> All rights reserved</p>`;
         
         // Add the footer to the end of the body for proper positioning
         document.body.appendChild(footer);
