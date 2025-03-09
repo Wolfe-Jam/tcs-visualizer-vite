@@ -367,15 +367,13 @@
     </div>
 
     <div class="container">
-        <div style="display: flex; justify-content: flex-end; align-items: center; margin: 10px 0; padding: 0;">
-            <div>
-                <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
-                    <i class="fas fa-download" style="margin-right: 5px;"></i>Download
-                </button>
-            </div>
-        </div>
         <div class="visualization-container">
             <div id="visualization"></div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0; padding: 0;">
+            <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1.2rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; margin: 0 auto;" title="Download Visualization">
+                <i class="fas fa-download"></i>
+            </button>
         </div>
         <div class="controls">
             <div class="control-group">
@@ -777,6 +775,8 @@
                 bannerAboutLink.addEventListener('click', function(e) {
                     e.preventDefault();
                     aboutModal.style.display = 'block';
+                    // Debug message
+                    console.log('About modal should be displayed now');
                 });
             }
             

@@ -995,7 +995,7 @@ export class EnhancedTCMVisualization {
             notification.style.top = '20px';
             notification.style.left = '50%';
             notification.style.transform = 'translateX(-50%)';
-            notification.style.backgroundColor = 'rgba(0, 150, 0, 0.8)';
+            notification.style.backgroundColor = 'rgba(0, 56, 71, 0.9)'; // Changed from green to match app theme
             notification.style.color = 'white';
             notification.style.padding = '10px 20px';
             notification.style.borderRadius = '4px';
