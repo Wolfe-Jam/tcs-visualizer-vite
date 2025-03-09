@@ -169,24 +169,24 @@
                 text-align: center;
             }
             
-            /* Advanced Settings mobile improvements */
-            /* On mobile, always show advanced settings (no dropdown) */
-            #advancedSettingsHeader button {
-                display: none; /* Hide the dropdown button on mobile */
-            }
-            
+            /* Mobile-first CSS for Advanced Settings */
             #advancedSettingsContent {
-                display: block !important; /* Always show content on mobile */
                 border-left: 2px solid var(--selector-border);
                 width: 100%;
                 padding: 10px;
                 box-sizing: border-box;
-                margin-top: 10px;
-                overflow: visible;
-                max-height: none;
+                overflow-y: auto;
+                max-height: 300px;
+                /* Mobile: Always visible */
+                display: block; 
             }
             
-            /* Desktop specific styling */
+            /* Hide dropdown button on mobile */
+            #advancedSettingsHeader button {
+                display: none;
+            }
+            
+            /* Desktop behavior (>= 769px) */
             @media (min-width: 769px) {
                 #advancedSettingsHeader {
                     cursor: pointer;
@@ -196,12 +196,9 @@
                     display: block; /* Show button on desktop */
                 }
                 
+                /* Hide content by default on desktop */
                 #advancedSettingsContent {
-                    display: none !important; /* Hidden by default on desktop */
-                }
-                
-                #advancedSettingsContent.expanded {
-                    display: block !important; /* Show when expanded class is added */
+                    display: none;
                 }
             }
             
@@ -676,7 +673,8 @@
                         <button id="collapseAdvanced" style="background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer;">▼</button>
                     </div>
                     
-                    <div id="advancedSettingsContent" style="border-left: 2px solid var(--selector-border); padding: 10px; padding-bottom: 15px; width: 100%; box-sizing: border-box;">
+                    <!-- Dropdown content - will be toggled by JS -->
+                    <div id="advancedSettingsContent">
                         <!-- Stem Type Selection -->
                         <div style="margin-bottom: 15px;">
                             <div class="toggle-container" style="margin-bottom: 15px;">

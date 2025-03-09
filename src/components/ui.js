@@ -382,63 +382,35 @@ export function setupUI(visualization) {
     const collapseAdvancedBtn = document.getElementById('collapseAdvanced');
     
     if (advancedSettingsHeader && collapseAdvancedBtn && advancedSettingsContent) {
-        // Check if we're on desktop (window width > 768px)
-        const isDesktop = () => window.innerWidth >= 769;
-        
-        // Function to toggle the advanced settings panel
+        // Simple toggle function for desktop
         const toggleAdvancedSettings = (e) => {
-            // Only apply toggle functionality on desktop
-            if (!isDesktop()) return;
+            if (e) e.preventDefault(); // Prevent default behavior
             
-            // Prevent default behavior
-            if (e) e.preventDefault();
-            
-            // Toggle the expanded class
-            const isExpanded = advancedSettingsContent.classList.contains('expanded');
-            
-            if (!isExpanded) {
-                // Expand
-                advancedSettingsContent.classList.add('expanded');
-                collapseAdvancedBtn.textContent = '▲'; // Up arrow
-                console.log('Advanced settings expanded');
-            } else {
-                // Collapse
-                advancedSettingsContent.classList.remove('expanded');
+            // Toggle visibility
+            if (advancedSettingsContent.style.display === 'block') {
+                // Hide it
+                advancedSettingsContent.style.display = 'none';
                 collapseAdvancedBtn.textContent = '▼'; // Down arrow
                 console.log('Advanced settings collapsed');
+            } else {
+                // Show it
+                advancedSettingsContent.style.display = 'block';
+                collapseAdvancedBtn.textContent = '▲'; // Up arrow
+                console.log('Advanced settings expanded');
             }
         };
         
-        // Initialize state based on desktop/mobile
-        if (isDesktop()) {
-            // Desktop starts collapsed
-            collapseAdvancedBtn.textContent = '▼';
-        }
-        
-        // Add click event for the header on desktop only
-        if (isDesktop()) {
-            // Desktop click events
+        // For desktop only
+        if (window.innerWidth >= 769) {
+            // Add click event listeners
             advancedSettingsHeader.addEventListener('click', toggleAdvancedSettings);
-            
-            // Button click event to prevent bubbling
             collapseAdvancedBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 toggleAdvancedSettings(e);
             });
         }
         
-        // Listen for resize events to handle desktop/mobile transitions
-        window.addEventListener('resize', () => {
-            if (isDesktop()) {
-                // Switching to desktop
-                advancedSettingsHeader.style.cursor = 'pointer';
-                collapseAdvancedBtn.style.display = 'block';
-            } else {
-                // Switching to mobile
-                advancedSettingsHeader.style.cursor = 'default';
-                collapseAdvancedBtn.style.display = 'none';
-            }
-        });
+        console.log('Advanced settings initialized');
     }
     
     // Curved Stem toggle
