@@ -370,8 +370,8 @@
         <div class="visualization-container">
             <div id="visualization"></div>
         </div>
-        <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0; padding: 0;">
-            <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1.2rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; margin: 0 auto;" title="Download Visualization">
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin: 10px 0; padding: 0;">
+            <button id="downloadButton" style="background-color: var(--selector-bg); border: none; color: var(--text-color); padding: 12px; border-radius: 4px; cursor: pointer; font-size: 1.2rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;" title="Download Visualization">
                 <i class="fas fa-download"></i>
             </button>
         </div>
@@ -668,7 +668,8 @@
     <script>
         // About modal functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const aboutButton = document.getElementById('aboutButton');
+            // Remove the aboutButton reference as it's been removed from the page
+            // const aboutButton = document.getElementById('aboutButton');
             const downloadButton = document.getElementById('downloadButton');
             const aboutModal = document.getElementById('aboutModal');
             const closeAboutModal = document.getElementById('closeAboutModal');
@@ -712,9 +713,10 @@
                 }
             });
             
-            aboutButton.addEventListener('click', function() {
-                aboutModal.style.display = 'block';
-            });
+            // aboutButton no longer exists - removed
+            // aboutButton.addEventListener('click', function() {
+            //     aboutModal.style.display = 'block';
+            // });
             
             closeAboutModal.addEventListener('click', function() {
                 aboutModal.style.display = 'none';
@@ -774,9 +776,14 @@
             if (bannerAboutLink) {
                 bannerAboutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    aboutModal.style.display = 'block';
-                    // Debug message
-                    console.log('About modal should be displayed now');
+                    // Get the modal element directly to ensure we have the latest reference
+                    const aboutModalElement = document.getElementById('aboutModal');
+                    if (aboutModalElement) {
+                        aboutModalElement.style.display = 'block';
+                        console.log('About modal should be displayed now');
+                    } else {
+                        console.error('About modal element not found');
+                    }
                 });
             }
             
